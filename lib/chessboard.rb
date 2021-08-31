@@ -1,4 +1,5 @@
 require_relative 'chess_square'
+require_relative 'colors'
 
 class Chessboard
   def initialize
@@ -15,15 +16,15 @@ class Chessboard
     output = ''
     ranks = ('a'..'h').to_a
 
-    ranks.each do |rank|
-      output += "#{rank} "
+    ranks.each_with_index do |rank, index|
+      output += "#{(index - 8).abs} "
       row = squares.select { |square| square.rank == rank }
 
-      row.reverse.each { |item| output += "#{item.position} " }
+      row.reverse.each { |item| output += item.to_s }
       output += "\n"
     end
 
-    output += "  1  2  3  4  5  6  7  8\n"
+    output += "  a b c d e f g h\n"
   end
 
   private
@@ -37,7 +38,11 @@ class Chessboard
     @squares.each_index do |index|
       rank = positions[index][0]
       file = positions[index][1]
-      squares[index] = ChessSquare.new(rank, file)
+      colors = (rank.ord + file.to_i) % 2 == 0 ? {bg_color: Colors::BG_BLACK} : {bg_color: Colors::BG_GRAY}
+      colors = 
+
+      square = ChessSquare.new(rank, file, colors)
+      squares[index] = square
     end
   end
 end
