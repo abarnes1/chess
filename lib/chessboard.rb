@@ -27,6 +27,10 @@ class Chessboard
     output += "  a b c d e f g h\n"
   end
 
+  def select(position)
+    @squares.find { |square| square.position == position }
+  end
+
   private
 
   def initialize_squares
@@ -39,7 +43,6 @@ class Chessboard
       rank = positions[index][0]
       file = positions[index][1]
       colors = (rank.ord + file.to_i) % 2 == 0 ? {bg_color: Colors::BG_BLACK} : {bg_color: Colors::BG_GRAY}
-      colors = 
 
       square = ChessSquare.new(rank, file, colors)
       squares[index] = square
