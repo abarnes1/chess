@@ -1,4 +1,5 @@
 class ChessSquare
+  attr_accessor :color, :bg_color, :blink, :bg_highlight
   attr_reader :rank, :file
 
   def initialize(rank, file, color_values = {})
