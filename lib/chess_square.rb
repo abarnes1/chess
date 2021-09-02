@@ -3,8 +3,8 @@ class ChessSquare
   attr_reader :rank, :file
 
   def initialize(rank, file, color_values = {})
-    @rank = rank
-    @file = file
+    @rank = rank # numerical/row
+    @file = file # alpha/column
     @piece = nil
 
     @bg_color = color_values.key?(:bg_color) ? color_values[:bg_color] : nil
@@ -15,7 +15,7 @@ class ChessSquare
   end
 
   def position
-    "#{rank}#{file}"
+    "#{file}#{rank}"
   end
 
   def piece=(piece)

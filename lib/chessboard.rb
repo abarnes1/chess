@@ -14,13 +14,13 @@ class Chessboard
 
   def display
     output = ''
-    ranks = ('a'..'h').to_a
+    ranks = ('1'..'8').to_a.reverse
 
     ranks.each_with_index do |rank, index|
       output += "#{(index - 8).abs} "
       row = squares.select { |square| square.rank == rank }
 
-      row.reverse.each { |item| output += item.to_s }
+      row.each { |item| output += item.to_s }
       output += "\n"
     end
 
@@ -35,14 +35,14 @@ class Chessboard
 
   def initialize_squares
     @squares = Array.new(64)
-    ranks = ('a'..'h').to_a
-    files = ('1'..'8').to_a
+    ranks = ('1'..'8').to_a
+    files = ('a'..'h').to_a
     positions = ranks.product(files).map { |pair| pair.join }
 
     @squares.each_index do |index|
       rank = positions[index][0]
       file = positions[index][1]
-      colors = (rank.ord + file.to_i) % 2 == 0 ? {bg_color: Colors::BG_BLACK} : {bg_color: Colors::BG_GRAY}
+      colors = (file.ord + rank.to_i) % 2 == 0 ? {bg_color: Colors::BG_BLACK} : {bg_color: Colors::BG_BRIGHT_GRAY}
 
       square = ChessSquare.new(rank, file, colors)
       squares[index] = square
