@@ -28,7 +28,7 @@ class Chessboard
   end
 
   def select(position)
-    @squares.find { |square| square.position == position }
+    squares.find { |square| square.position == position }
   end
 
   private
