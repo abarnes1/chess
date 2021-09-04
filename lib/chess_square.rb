@@ -1,10 +1,11 @@
+require_relative 'position'
+
 class ChessSquare
   attr_accessor :color, :bg_color, :blink, :bg_highlight
-  attr_reader :rank, :file
+  attr_reader :position
 
-  def initialize(rank, file, color_values = {})
-    @rank = rank # numerical/row
-    @file = file # alpha/column
+  def initialize(position, color_values = {})
+    @position = position
     @piece = nil
 
     @bg_color = color_values.key?(:bg_color) ? color_values[:bg_color] : nil
@@ -14,8 +15,12 @@ class ChessSquare
     @blink = color_values.key?(:blink) ? color_values[:blink] : false
   end
 
-  def position
-    "#{file}#{rank}"
+  def rank
+    @position.rank
+  end
+
+  def file
+    @position.file
   end
 
   def piece=(piece)

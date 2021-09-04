@@ -37,14 +37,13 @@ class Chessboard
     @squares = Array.new(64)
     ranks = ('1'..'8').to_a
     files = ('a'..'h').to_a
-    positions = ranks.product(files).map { |pair| pair.join }
+    positions = files.product(ranks).map { |pair| pair.join }
 
     @squares.each_index do |index|
-      rank = positions[index][0]
-      file = positions[index][1]
-      colors = (file.ord + rank.to_i) % 2 == 0 ? {bg_color: Colors::BG_BLACK} : {bg_color: Colors::BG_BRIGHT_GRAY}
+      position = Position.new(positions[index])
+      colors = ((position.file.ord + position.rank.to_i) % 2).zero? ? { bg_color: Colors::BG_BLACK } : { bg_color: Colors::BG_BRIGHT_GRAY }
 
-      square = ChessSquare.new(rank, file, colors)
+      square = ChessSquare.new(position, colors)
       squares[index] = square
     end
   end
