@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 require_relative 'position'
 
+# Object representation of a single square on a standard chessboard
 class ChessSquare
   attr_accessor :color, :bg_color, :blink, :bg_highlight
   attr_reader :position
