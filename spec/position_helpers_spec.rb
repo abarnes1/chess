@@ -9,42 +9,40 @@ describe PositionHelperTestClass do
 
   describe '#inbounds?' do
     context 'when position is inbounds' do
-      it "'a1' is inbounds" do
+      it "a1 is inbounds" do
         position = Position.new('a1')
         expect(position_test.inbounds?(position)).to eq(true)
       end
 
-      it "'h8' is inbounds" do
+      it "h8 is inbounds" do
         position = Position.new('h8')
         expect(position_test.inbounds?(position)).to eq(true)
       end
     end
 
     context 'when position is not inbounds' do
-      it "'a0' is not inbounds" do
+      it "a0 is not inbounds" do
         position = Position.new('a0')
         expect(position_test.inbounds?(position)).to eq(false)
       end
 
-      it "'h9' is not inbounds" do
+      it "h9 is not inbounds" do
         position = Position.new('h9')
         expect(position_test.inbounds?(position)).to eq(false)
       end
     end
 
     context 'when position is not a Position object' do
-      it 'returns nil for 1' do
+      it 'returns nil for numerical 1' do
         expect(position_test.inbounds?(1)).to be_nil
       end
-    end
 
-    context 'when position is not a string of length 2' do
-      xit "returns nil for 'a1h'" do
-        expect(position_test.inbounds?('a1h')).to be_nil
+      it "returns nil for string 'a1'" do
+        expect(position_test.inbounds?(1)).to be_nil
       end
 
-      xit "returns nil for 'a'" do
-        expect(position_test.inbounds?('a')).to be_nil
+      it "returns nil for nil" do
+        expect(position_test.inbounds?(nil)).to be_nil
       end
     end
   end
