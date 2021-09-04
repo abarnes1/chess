@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'position'
+
 # Helper functions that are used throughout the chess game, including
 # the various pieces, to calculate moves and determine if they are
 # inside the bounds of a normal chessboard.
