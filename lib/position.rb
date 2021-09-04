@@ -5,8 +5,8 @@ class Position
   attr_reader :rank, :file
 
   def initialize(position)
-    @file = position[0] # numerical/row
-    @rank = position[1] # alpha/column
+    @file = position[0] # alpha column
+    @rank = position[1] # numerical row
   end
 
   def position
@@ -14,14 +14,10 @@ class Position
   end
 
   def ==(other)
-    # p 'equality!'
     other.position == position
   end
 
   def to_s
     position
   end
-
-  # def to_i
-  # end
 end
