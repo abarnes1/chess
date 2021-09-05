@@ -1,5 +1,5 @@
 require_relative 'chess_square'
-require_relative 'colors'
+require_relative 'constants/colors'
 
 class Chessboard
   def initialize
