@@ -4,10 +4,12 @@ require_relative '../position_helpers'
 class Bishop < ChessPiece
   include PositionHelpers
 
-  def initialize(position = nil, owner = nil, icon = "\u265D")
-    super(position, owner)
-    @icon = icon.freeze
+  attr_reader :notation
+
+  def initialize(icon: "\u265D", position: nil, owner: nil)
+    super(icon: icon, position: position, owner: owner)
     @movements = [[-1, -1], [-1, 1], [1, -1], [1, 1]]
+    @notation = 'B'.freeze
   end
 
   def possible_moves
@@ -24,9 +26,5 @@ class Bishop < ChessPiece
     end
 
     moves
-  end
-
-  def to_s
-    @icon
   end
 end

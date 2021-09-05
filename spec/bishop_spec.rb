@@ -17,7 +17,7 @@ describe Bishop do
   describe '#possible_moves' do
     context 'when on square c4' do
       context 'up + right diagonals: movement is [1, 1]' do
-        subject(:up_right_bishop) { described_class.new(Position.new('c4')) }
+        subject(:up_right_bishop) { described_class.new(position: Position.new('c4')) }
         let(:up_right_moves) { up_right_bishop.possible_moves }
 
         it 'can move to d5' do
