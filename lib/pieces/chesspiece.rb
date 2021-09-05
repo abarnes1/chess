@@ -1,11 +1,12 @@
 #
 class ChessPiece
-  attr_reader :position
+  attr_reader :position, :algebraic_letter
 
   def initialize(icon: 'X', position: nil, owner: nil)
     @icon = icon.freeze
     @owner = owner
     @position = position
+    @algebraic_letter = 'X'.freeze
   end
 
   def possible_moves
