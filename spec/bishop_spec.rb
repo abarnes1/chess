@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../lib/pieces/bishop'
 
 describe Bishop do
@@ -15,42 +17,23 @@ describe Bishop do
   describe '#possible_moves' do
     context 'when on square c4' do
       context 'up + right diagonals: movement is [1, 1]' do
-        subject(:up_right_bishop) { described_class.new('c4') }
+        subject(:up_right_bishop) { described_class.new(Position.new('c4')) }
         let(:up_right_moves) { up_right_bishop.possible_moves }
 
         it 'can move to d5' do
-          expect(up_right_moves).to include('d5')
+          expect(up_right_moves).to include(Position.new('d5'))
         end
 
         it 'can move to e6' do
-          expect(up_right_moves).to include('e6')
+          expect(up_right_moves).to include(Position.new('e6'))
         end
 
         it 'can move to f7' do
-          expect(up_right_moves).to include('f7')
+          expect(up_right_moves).to include(Position.new('f7'))
         end
 
         it 'can move to g8' do
-          expect(up_right_moves).to include('g8')
-        end
-      end
-    end
-
-    context 'when on square c4' do
-      context 'up + right diagonals: movement is [1, -1]' do
-        subject(:down_right_bishop) { described_class.new('c4') }
-        let(:down_right_moves) { down_right_bishop.possible_moves }
-
-        it 'can move to d3' do
-          expect(down_right_moves).to include('d3')
-        end
-
-        it 'can move to e2' do
-          expect(down_right_moves).to include('e2')
-        end
-
-        it 'can move to f1' do
-          expect(down_right_moves).to include('f1')
+          expect(up_right_moves).to include(Position.new('g8'))
         end
       end
     end
