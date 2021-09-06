@@ -9,9 +9,14 @@ class Move
   end
 
   def stop_at(stop_position)
+    puts "trying to stop move at #{stop_position}"
     stop_index = @sequence.find_index { |position| position == stop_position }
 
-    @sequence = @sequence[0..stop_index] unless stop_index.nil?
+    if stop_index.nil?
+      @sequence = []
+    else
+      @sequence = @sequence[0..stop_index] unless stop_index.nil?
+    end
   end
 
   def to_s
