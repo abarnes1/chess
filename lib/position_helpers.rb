@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'position'
+require_relative 'move'
 
 # Helper functions that are used throughout the chess game, including
 # the various pieces, to calculate moves and determine if they are
@@ -13,7 +14,7 @@ module PositionHelpers
   end
 
   def calculate_position(position, offset)
-    return nil if offset.any? { |move| move.abs >= 8 }
+    return nil if offset.any? { |coord| coord.abs >= 8 }
 
     new_position = Position.new(calculate_file(position.file, offset[0]) + calculate_rank(position.rank, offset[1]))
 
