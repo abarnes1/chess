@@ -1,6 +1,7 @@
 require_relative '../position_helpers'
 
-# Defines the interface and common behavior for other Sequence types.
+# A series of coordinate offsets used to calculate position
+# to position movements for chess pieces.
 class Sequence
   include PositionHelpers
 
@@ -15,21 +16,16 @@ class Sequence
     return nil if offsets.nil?
 
     positions = []
+    next_start_position = start_position
 
     offsets.each do |offset|
-      new_position = calculate_position(start_position, offset)
+      new_position = calculate_position(next_start_position, offset)
       break if new_position.nil?
 
+      next_start_position = new_position
       positions << new_position
     end
 
     positions
   end
 end
-
-# Move.for(sequence)
-
-# Move
-#  - has start
-#  - has end
-#  - has next
