@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../lib/movement/sequence'
 
 describe Sequence do
@@ -13,7 +15,7 @@ describe Sequence do
     end
 
     context 'when offset contains no valid coordinate values' do
-      it 'returns no positions sequence contains only nil' do
+      it 'returns no positions when sequence contains only nil' do
         nil_in_offset_sequence = described_class.new(Position.new('c4'), [nil])
 
         expected = []
@@ -61,8 +63,42 @@ describe Sequence do
       end
     end
 
-    # context 'when a multiple points are used' do
-    #   subject(:single_point) { described_class.new }
-    # end
+    context 'when a multiple points are used' do
+      it 'calculates all positions' do
+        test_sequence = [[1, 1], [-2, -2], [3, 3]]
+        multi_point_sequence = described_class.new(Position.new('c4'), test_sequence)
+
+        expected = [
+          Position.new('d5'),
+          Position.new('b3'),
+          Position.new('e6')
+        ]
+        actual = multi_point_sequence.positions
+
+        expect(actual).to eq(expected)
+      end
+
+      context 'when sequence contains invalid value' do
+        it 'stops the sequence on nil' do
+          test_sequence = [[2, 2], nil, [2, 2]]
+          sequence_with_nil = described_class.new(Position.new('c4'), test_sequence)
+
+          expected = [Position.new('e6')]
+          actual = sequence_with_nil.positions
+
+          expect(actual).to eq(expected)
+        end
+
+        it 'stops the sequence on out of range' do
+          test_sequence = [[2, 2], [777, 777], [1, 1]]
+          sequence_with_out_of_range = described_class.new(Position.new('c4'), test_sequence)
+
+          expected = [Position.new('e6')]
+          actual = sequence_with_out_of_range.positions
+
+          expect(actual).to eq(expected)
+        end
+      end
+    end
   end
 end
