@@ -20,4 +20,8 @@ class Position
   def to_s
     position
   end
+
+  def inbounds?
+    ('a'..'h').include?(file) && ('1'..'8').include?(rank)
+  end
 end
