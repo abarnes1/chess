@@ -24,12 +24,12 @@ module Positioning
                             end
     end
 
-    position_sequences
+    clean(position_sequences)
   end
 
   def next_position(position, offset)
     return nil if position.nil?
-    return nil if offset.nil? || offset_out_of_range?(offset)
+    return nil if offset.nil? || offset.out_of_range?
 
     new_position = Position.new(calculate_file(position.file, offset.x) + calculate_rank(position.rank, offset.y))
 
@@ -38,6 +38,8 @@ module Positioning
 
   def position_chain(start_position, repeating_offset)
     positions = []
+    # return positions unless repeating_offset.instance_of?(Offset) && repeating_offset.repeat?
+
     current_position = start_position
 
     until current_position.nil? || !current_position.inbounds?
@@ -45,6 +47,7 @@ module Positioning
       break if current_position.nil? || !current_position.inbounds?
 
       positions << current_position
+      break unless repeating_offset.repeat?
     end
 
     positions
@@ -60,8 +63,8 @@ module Positioning
     (file.ord + x_offset).chr
   end
 
-  def offset_out_of_range?(offset)
-    offset.x.abs >= 8 || offset.y.abs >= 8
+  def clean(sequences)
+    sequences.compact.delete_if { |sequence| sequence.all?(nil) || sequence.empty? }
   end
 end
 
