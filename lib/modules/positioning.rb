@@ -77,22 +77,3 @@ offsets_a = [
   Offset.new([1, 1]),
   Offset.new([2, 0])
 ]
-
-test = TestClass.new
-
-sequences = test.position_sequences(pos, offsets_a)
-sequences.each do |item|
-  puts "sequence of class: #{item.class} -> #{item.join(' | ')}"
-end
-
-offsets_b = [
-  Offset.new([1, 1], repeat: true),
-  Offset.new([2, 0])
-]
-pos = Position.new('a1')
-puts test.position_sequences(pos, offsets_b).join(' | ')
-
-sequences = test.position_sequences(pos, offsets_b)
-sequences.each do |item|
-  puts "sequence of class: #{item.class} -> #{item.join(' | ')}"
-end
