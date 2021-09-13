@@ -7,12 +7,6 @@ require_relative '../movement/offset'
 # the various pieces, to calculate moves and determine if they are
 # inside the bounds of a normal chessboard.
 module Positioning
-  # def inbounds?(position)
-  #   return nil unless position.instance_of?(Position)
-
-  #   ('a'..'h').include?(position.file) && ('1'..'8').include?(position.rank)
-  # end
-
   def position_sequences(position, offsets)
     position_sequences = []
 
@@ -38,7 +32,6 @@ module Positioning
 
   def position_chain(start_position, repeating_offset)
     positions = []
-    # return positions unless repeating_offset.instance_of?(Offset) && repeating_offset.repeat?
 
     current_position = start_position
 
@@ -67,13 +60,3 @@ module Positioning
     sequences.compact.delete_if { |sequence| sequence.all?(nil) || sequence.empty? }
   end
 end
-
-class TestClass
-  include Positioning
-end
-
-pos = Position.new('a1')
-offsets_a = [
-  Offset.new([1, 1]),
-  Offset.new([2, 0])
-]
