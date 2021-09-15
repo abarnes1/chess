@@ -1,16 +1,15 @@
 # frozen_string_literal: true
+require_relative '../movement/offset'
+require_relative '../movement/repeat_offset'
 
 class ChessPiece
-  attr_reader :position, :algebraic_letter
+  attr_reader :position, :offsets, :algebraic_letter
 
-  def initialize(icon: 'X', position: nil)
+  def initialize(icon: 'X', position: nil, offsets: nil)
     @icon = icon.freeze
     @position = position
-    @notation_letter = 'X'.freeze
-  end
-
-  def possible_moves
-    raise NotImplementedError
+    @offsets = offsets
+    @notation_letter = 'X'
   end
 
   def to_s
