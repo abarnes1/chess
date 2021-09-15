@@ -23,11 +23,16 @@ module Positioning
 
   def next_position(position, offset)
     return nil if position.nil?
-    return nil if offset.nil? || offset.out_of_range?
+    
+    # return nil if offset.nil? || offset.out_of_range?
 
     new_position = Position.new(calculate_file(position.file, offset.x) + calculate_rank(position.rank, offset.y))
 
     new_position.inbounds? ? new_position : nil
+  end
+
+  def pos_test
+    'success!'
   end
 
   def position_chain(start_position, repeating_offset)
