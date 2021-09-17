@@ -1,5 +1,5 @@
 class Action
-  def initialize
+  def initialize(*args)
 
   end
 

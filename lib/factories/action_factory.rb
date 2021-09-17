@@ -1,4 +1,9 @@
-Dir['../actions/*.rb'].sort.each { |file| require file }
+Dir['../actions/*.rb'].sort.each { |file| require file}
+
+# Dir['../actions/*.rb'].sort.each do |file|
+#   puts "requiring file in ActionFactory: #{file}"
+#   require file
+# end
 
 # require_relative '../actions/*'
 
