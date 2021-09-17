@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'chesspiece'
+require_relative '../movement_helpers'
 
 class PieceCollection
   attr_reader :pieces
@@ -21,21 +22,29 @@ class PieceCollection
     @pieces.delete(piece)
   end
 
-  # considers the collection as a whole
-  def moves(piece)
-    selected_piece = select_by_piece(piece)
+  def enemy_at?(friendly_owner, position)
+    piece = select_by_position(position)
 
-    moves = selected_piece.possible_moves
+    return false if piece.nil?
 
-    moves.each do |move|
-      remove_blocked_moves(move)
-    end
-
-    moves
+    result = piece.owner != friendly_owner
+    puts "occupied_by_enemy? (#{position}): #{result}"
+    result
   end
 
-  def occupies?(position)
-    @pieces.any? { |piece| piece.position == position }
+  def friendly_at?(friendly_owner, position)
+    piece = select_by_position(position)
+    return false if piece.nil?
+    
+    result = piece.owner == friendly_owner
+    puts "occupied_by_friendly? (#{position}): #{result}"
+    result
+  end
+
+  def occupied_at?(position)
+    piece = select_by_position(position)
+
+    piece.nil? ? false : true
   end
 
   # can single square be attacked by any of my pieces
@@ -48,31 +57,11 @@ class PieceCollection
     raise NotImplementedError
   end
 
-  private
-
   def select_by_position(position)
-    # p "finding own piece at position: #{position}"
     @pieces.find { |piece| piece.position == position }
   end
 
   def select_by_piece(piece)
     @pieces.find { |item| item == piece }
-  end
-
-  # asks sequence to mutate, maybe need alternative?
-  def remove_blocked_moves(move)
-    return if move.sequence.length.zero?
-
-    start = move.start_position
-    last = start
-
-    move.sequence[0..-1].each do |position|
-      if occupies?(position)
-        move.stop_at(last)
-        break
-      end
-
-      last = position
-    end
   end
 end

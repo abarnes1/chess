@@ -3,13 +3,14 @@ require_relative '../movement/offset'
 require_relative '../movement/repeat_offset'
 
 class ChessPiece
-  attr_reader :position, :offsets, :algebraic_letter
+  attr_reader :position, :offsets, :algebraic_letter, :owner
 
-  def initialize(icon: 'X', position: nil, offsets: nil)
+  def initialize(icon: 'X', owner: nil, position: nil, offsets: nil)
     @icon = icon.freeze
     @position = position
     @offsets = offsets
     @notation_letter = 'X'
+    @owner = owner
   end
 
   def to_s
