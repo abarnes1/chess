@@ -6,7 +6,7 @@ class Move < Action
     @piece = piece
     @move_to = move_to
     @move_from = move_from
-    
+
     puts "initializing #{self}"
   end
 
@@ -15,6 +15,10 @@ class Move < Action
   end
 
   def to_s
-    "move initialize: #{@piece} from #{@move_from} to #{@move_to}"
+    "move: #{@piece} from #{@move_from} to #{@move_to}"
+  end
+
+  def notation
+    "#{@piece.notation_letter}#{@move_to}"
   end
 end

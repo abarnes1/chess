@@ -17,4 +17,8 @@ class Capture < Action
   def to_s
     "capture: #{@piece} from #{@move_from} to #{@move_to} and capture #{@captured}"
   end
+
+  def notation
+    "#{@piece.notation_letter}x#{@move_to}"
+  end
 end
