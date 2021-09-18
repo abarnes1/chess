@@ -7,10 +7,14 @@ class Capture < Action
     @move_to = move_to
     @move_from = move_from
     @captured = captured
-    puts "capture initialize: #{@piece} from #{move_from} to #{move_to} and capture #{captured}"
+    puts "initializing #{self}"
   end
 
   def apply(board)
     # actually moving the pieces
+  end
+
+  def to_s
+    "capture: #{@piece} from #{@move_from} to #{@move_to} and capture #{@captured}"
   end
 end

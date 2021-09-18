@@ -10,4 +10,8 @@ class Action
   def notation
     puts 'no notation override!'
   end
+
+  def to_s
+    raise NotImplementedError
+  end
 end
