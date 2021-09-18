@@ -1,5 +1,6 @@
+# frozen_string_literal: true
+
 require_relative '../modules/positioning'
-require_relative 'capture'
 
 class ActionCalculator
   extend Positioning
@@ -13,7 +14,7 @@ class ActionCalculator
     actions << captures_for(piece, piece_collection)
 
     puts 'all actions: '
-    puts actions
+    puts actions.flatten.map(&:notation).join("\n")
   end
 
   def self.moves_for(piece, piece_collection)
@@ -21,14 +22,23 @@ class ActionCalculator
 
     piece.move_offsets.each do |offset|
       current_position = piece.position
+      counter = 0
+
       until current_position.nil?
+        counter += 1
         current_position = next_position(current_position, offset)
 
         break if !piece_collection.nil? && piece_collection.occupied_at?(current_position)
 
-        moves << ActionFactory.create_action(Move, piece, piece.position, current_position) unless current_position.nil?
+        unless current_position.nil?
+          moves << if piece.is_a?(Pawn) && piece.can_promote?(current_position)
+                     ActionFactory.create_action(Promote, piece, '?', current_position)
+                   else
+                     ActionFactory.create_action(Move, piece, piece.position, current_position)
+                   end
+        end
 
-        break unless offset.is_a?(RepeatOffset)
+        break unless offset.is_a?(RepeatOffset) && offset.continue?(counter)
       end
     end
 
@@ -41,11 +51,14 @@ class ActionCalculator
     moves = []
 
     piece.capture_offsets.each do |offset|
+      counter = 0
+
       current_position = piece.position
       until current_position.nil?
+        counter += 1
         current_position = next_position(current_position, offset)
 
-        break if piece_collection.friendly_at?(piece.owner, current_position)
+        break if current_position.nil? || piece_collection.friendly_at?(piece.owner, current_position)
 
         if piece_collection.enemy_at?(piece.owner, current_position)
           capture_piece = piece_collection.select_by_position(current_position)
@@ -53,7 +66,7 @@ class ActionCalculator
           break
         end
 
-        break unless offset.is_a?(RepeatOffset)
+        break unless offset.is_a?(RepeatOffset) && offset.continue?(counter)
       end
     end
 
