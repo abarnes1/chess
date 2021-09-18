@@ -6,8 +6,8 @@ require_relative '../modules/positioning'
 class BlackPawn < Pawn
   include Positioning
 
-  def initialize(icon: "\u265F", position: nil)
-    super(icon: icon, position: position)
+  def initialize(icon: "\u265F", position: nil, owner: nil)
+    super(icon: icon, position: position, owner: owner)
 
     @notation_letter = ''
   end
