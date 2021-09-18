@@ -1,11 +1,6 @@
-Dir['../actions/*.rb'].sort.each { |file| require file}
+# frozen_string_literal: true
 
-# Dir['../actions/*.rb'].sort.each do |file|
-#   puts "requiring file in ActionFactory: #{file}"
-#   require file
-# end
-
-# require_relative '../actions/*'
+Dir['lib/actions/*.rb'].sort.each { |file| require_relative "../../#{file}" }
 
 class ActionFactory
   def initialize; end
