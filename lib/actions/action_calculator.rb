@@ -9,49 +9,54 @@ class ActionCalculator
   def self.actions_for(piece, piece_collection = nil, move_log = nil)
     actions = []
 
-    if piece_collection.nil?
-      actions << default_moves(piece, piece_collection)
-    else
-      actions << unblocked_moves(piece, piece_collection)
-    end
+    actions << moves_for(piece, piece_collection)
+    actions << captures_for(piece, piece_collection)
 
-    # add castling, en passant, promote here maybe?
+    puts 'all actions: '
+    puts actions
   end
 
-  def self.default_moves(piece, _piece_collection)
+  def self.moves_for(piece, piece_collection)
     moves = []
 
-    piece.offsets.each do |offset|
+    piece.move_offsets.each do |offset|
       current_position = piece.position
       until current_position.nil?
         current_position = next_position(current_position, offset)
 
+        break if !piece_collection.nil? && piece_collection.occupied_at?(current_position)
+
         moves << ActionFactory.create_action(Move, piece, piece.position, current_position) unless current_position.nil?
 
-        break unless offset.is_a? RepeatOffset
+        break unless offset.is_a?(RepeatOffset)
       end
     end
+
+    moves
   end
 
-  def self.unblocked_moves(piece, piece_collection)
+  def self.captures_for(piece, piece_collection)
+    return [] if piece_collection.nil?
+
     moves = []
 
-    piece.offsets.each do |offset|
+    piece.capture_offsets.each do |offset|
       current_position = piece.position
       until current_position.nil?
         current_position = next_position(current_position, offset)
 
         break if piece_collection.friendly_at?(piece.owner, current_position)
 
-        moves << if piece_collection.enemy_at?(piece.owner, current_position)
-                   capture_piece = piece_collection.select_by_position(current_position)
-                   ActionFactory.create_action(Capture, piece, piece.position, current_position, capture_piece)
-                 else
-                   ActionFactory.create_action(Move, piece, piece.position, current_position)
-                 end
+        if piece_collection.enemy_at?(piece.owner, current_position)
+          capture_piece = piece_collection.select_by_position(current_position)
+          moves << ActionFactory.create_action(Capture, piece, piece.position, current_position, capture_piece)
+          break
+        end
 
-        break if !offset.is_a?(RepeatOffset) || piece_collection.occupied_at?(current_position)
+        break unless offset.is_a?(RepeatOffset)
       end
     end
+
+    moves
   end
 end
