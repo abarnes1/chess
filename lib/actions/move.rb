@@ -1,6 +1,7 @@
 require_relative 'action'
 
 class Move < Action
+  attr_accessor :piece, :move_from, :move_to
   def initialize(piece = nil, move_from = nil, move_to = nil)
     super
     @piece = piece

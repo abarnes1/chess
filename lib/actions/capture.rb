@@ -1,6 +1,7 @@
 require_relative 'action'
 
 class Capture < Action
+  attr_reader :piece, :move_to, :move_from, :captured
   def initialize(piece = nil, move_from = nil, move_to = nil, captured)
     super
     @piece = piece
