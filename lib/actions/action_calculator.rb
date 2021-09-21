@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require_relative '../modules/positioning'
+require_relative '../pieces/pawn'
+require_relative '../factories/action_factory'
 
 class ActionCalculator
   extend Positioning
@@ -13,32 +15,26 @@ class ActionCalculator
     actions << moves_for(piece, piece_collection)
     actions << captures_for(piece, piece_collection)
 
-    puts 'all actions: '
-    puts actions.flatten.map(&:notation).join("\n")
+    # puts 'all actions: '
+    # puts actions.flatten.map(&:notation).join("\n")
+
+    actions.flatten
   end
 
   def self.moves_for(piece, piece_collection)
     moves = []
 
-    piece.move_offsets.each do |offset|
-      current_position = piece.position
-      counter = 0
+    sequences = calculate_sequences(piece.position, piece.move_offsets)
 
-      until current_position.nil?
-        counter += 1
-        current_position = next_position(current_position, offset)
+    sequences.each do |sequence|
+      sequence.each do |position|
+        break if !piece_collection.nil? && piece_collection.occupied_at?(position)
 
-        break if !piece_collection.nil? && piece_collection.occupied_at?(current_position)
-
-        unless current_position.nil?
-          moves << if piece.is_a?(Pawn) && piece.can_promote?(current_position)
-                     ActionFactory.create_action(Promote, piece, '?', current_position)
-                   else
-                     ActionFactory.create_action(Move, piece, piece.position, current_position)
-                   end
-        end
-
-        break unless offset.is_a?(RepeatOffset) && offset.continue?(counter)
+        moves << if piece.is_a?(Pawn) && piece.can_promote?(position)
+                   ActionFactory.create_action(Promote, piece, '?', position)
+                 else
+                   ActionFactory.create_action(Move, piece, piece.position, position)
+                 end
       end
     end
 
@@ -46,30 +42,50 @@ class ActionCalculator
   end
 
   def self.captures_for(piece, piece_collection)
-    return [] if piece_collection.nil?
-
     moves = []
 
-    piece.capture_offsets.each do |offset|
-      counter = 0
+    sequences = calculate_sequences(piece.position, piece.capture_offsets)
 
-      current_position = piece.position
-      until current_position.nil?
-        counter += 1
-        current_position = next_position(current_position, offset)
+    sequences.each do |sequence|
+      sequence.each do |position|
+        break if !piece_collection.nil? && piece_collection.friendly_at?(piece.owner, position)
 
-        break if current_position.nil? || piece_collection.friendly_at?(piece.owner, current_position)
-
-        if piece_collection.enemy_at?(piece.owner, current_position)
-          capture_piece = piece_collection.select_by_position(current_position)
-          moves << ActionFactory.create_action(Capture, piece, piece.position, current_position, capture_piece)
+        if piece_collection.enemy_at?(piece.owner, position)
+          capture_piece = piece_collection.select_by_position(position)
+          moves << ActionFactory.create_action(Capture, piece, piece.position, position, capture_piece)
           break
         end
-
-        break unless offset.is_a?(RepeatOffset) && offset.continue?(counter)
       end
     end
 
     moves
   end
+
+  # def self.captures_for(piece, piece_collection)
+  #   return [] if piece_collection.nil?
+
+  #   moves = []
+
+  #   piece.capture_offsets.each do |offset|
+  #     counter = 0
+
+  #     current_position = piece.position
+  #     until current_position.nil?
+  #       counter += 1
+  #       current_position = next_position(current_position, offset)
+
+  #       break if current_position.nil? || piece_collection.friendly_at?(piece.owner, current_position)
+
+  #       if piece_collection.enemy_at?(piece.owner, current_position)
+  #         capture_piece = piece_collection.select_by_position(current_position)
+  #         moves << ActionFactory.create_action(Capture, piece, piece.position, current_position, capture_piece)
+  #         break
+  #       end
+
+  #       break unless offset.is_a?(RepeatOffset) && offset.continue?(counter)
+  #     end
+  #   end
+
+  #   moves
+  # end
 end

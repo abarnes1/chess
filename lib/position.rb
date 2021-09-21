@@ -14,6 +14,8 @@ class Position
   end
 
   def ==(other)
+    return false if other.nil?
+
     other.position == position
   end
 
