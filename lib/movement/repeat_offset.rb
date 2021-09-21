@@ -1,7 +1,9 @@
 require_relative 'offset'
 
 class RepeatOffset < Offset
-  def initialize(coordinate, max_repeats = 100)
+  attr_reader :max_repeats
+
+  def initialize(coordinate, max_repeats = 777)
     super(coordinate)
 
     @max_repeats = max_repeats
