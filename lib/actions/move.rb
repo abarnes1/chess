@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'action'
 
 # A basic chess move where one piece moves from
@@ -33,7 +35,6 @@ class Move < Action
   end
 
   def apply(game_state)
-    puts 'applying move to game_state'
     game_state.add_action(self)
     piece.position = move_to
   end
