@@ -73,7 +73,7 @@ class Chessboard
   def reset_squares
     squares.each do |square|
       square.clear_piece
-      square.clear_highlight
+      square.clear_bg_highlight
     end
   end
 

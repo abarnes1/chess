@@ -30,12 +30,12 @@ class ChessSquare
     @piece = piece.nil? ? '  ' : "#{piece} "
   end
 
-  def clear_highlight
+  def clear_bg_highlight
     @bg_highlight = nil
   end
 
   def clear_piece
-    @piece = nil
+    self.piece = nil
   end
 
   def to_s
