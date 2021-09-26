@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative 'pawn'
-require_relative '../modules/positioning'
 
 class BlackPawn < Pawn
   include Positioning

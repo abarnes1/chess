@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative 'pawn'
-require_relative '../modules/positioning'
 
 class WhitePawn < Pawn
   include Positioning
@@ -22,7 +21,7 @@ class WhitePawn < Pawn
 
   def capture_offsets
     [
-      Offset.new([-1, 1]), 
+      Offset.new([-1, 1]),
       Offset.new([1, 1])
     ]
   end

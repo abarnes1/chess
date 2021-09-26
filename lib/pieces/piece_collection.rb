@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative 'chesspiece'
-require_relative '../movement_helpers'
 
 # A set of chess pieces, both friend and foe.
 class PieceCollection
@@ -52,5 +51,13 @@ class PieceCollection
 
   def select_by_piece(piece)
     @pieces.find { |item| item == piece }
+  end
+
+  def enemy_pieces(owner)
+    @pieces.reject { |piece| piece.owner == owner }
+  end
+
+  def friendly_pieces(owner)
+    @pieces.select { |piece| piece.owner == owner }
   end
 end
