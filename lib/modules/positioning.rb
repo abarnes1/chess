@@ -4,9 +4,8 @@ require_relative '../position'
 require_relative '../movement/offset'
 require_relative '../movement/repeat_offset'
 
-# Helper functions that are used throughout the chess game, including
-# the various pieces, to calculate moves and determine if they are
-# inside the bounds of a normal chessboard.
+# Helper functions that are used to calculate moves and determine
+# if they are inside the bounds of a normal chessboard.
 module Positioning
   def next_position(position, offset)
     return nil if position.nil?
@@ -18,7 +17,6 @@ module Positioning
   end
 
   def calculate_sequences(position, offsets)
-    p offsets
     return [] if offsets.nil?
 
     sequences = []
