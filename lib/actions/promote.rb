@@ -3,7 +3,8 @@ require_relative 'action'
 class Promote < Action
   attr_accessor :promote_to
   attr_reader :move_to, :piece
-  def initialize(piece = nil, promote_to = '?', move_to)
+
+  def initialize(piece, move_to, promote_to = '?')
     super
     @piece = piece
     @promote_to = promote_to
@@ -12,8 +13,31 @@ class Promote < Action
     puts "initializing #{self}"
   end
 
-  def apply(board)
-    # actually moving the pieces
+  def self.create_for(piece, game_state)
+    moves = []
+
+    sequences = calculate_sequences(piece.position, piece.move_offsets)
+
+    sequences.each do |sequence|
+      sequence.each do |position|
+        break if game_state.blocked_at?(position)
+
+        move = new(piece, position) if game_state.promote?(piece, position)
+
+        moves << move
+      end
+    end
+
+    moves
+  end
+
+  def apply(game_state)
+    game_state.add_action(self)
+
+    game_state.remove_piece(piece)
+    game_state.add_piece(promote_to)
+
+    promote_to.position = move_to
   end
 
   def to_s
