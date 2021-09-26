@@ -1,8 +1,13 @@
+# frozen_string_literal: true
+
 require_relative 'action'
 
+# A basic chess move where one piece moves from its current
+# square to another square occupied by an enemy piece.
 class Capture < Action
   attr_reader :piece, :move_to, :move_from, :captured
-  def initialize(piece = nil, move_from = nil, move_to = nil, captured)
+
+  def initialize(piece, move_from, move_to, captured)
     super
     @piece = piece
     @move_to = move_to
