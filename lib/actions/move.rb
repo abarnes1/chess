@@ -1,7 +1,10 @@
 require_relative 'action'
 
+# A basic chess move where one piece moves from
+# its current square to another unoccupied square.
 class Move < Action
   attr_accessor :piece, :move_from, :move_to
+
   def initialize(piece = nil, move_from = nil, move_to = nil)
     super
     @piece = piece
@@ -11,8 +14,28 @@ class Move < Action
     puts "initializing #{self}"
   end
 
-  def apply(board)
-    # actually moving the pieces
+  def self.create_for(piece, game_state)
+    moves = []
+
+    sequences = calculate_sequences(piece.position, piece.move_offsets)
+
+    sequences.each do |sequence|
+      sequence.each do |position|
+        break if game_state.blocked_at?(position)
+
+        move = new(piece, piece.position, position) unless game_state.promote?(piece, position)
+
+        moves << move
+      end
+    end
+
+    moves
+  end
+
+  def apply(game_state)
+    puts 'applying move to game_state'
+    game_state.add_action(self)
+    piece.position = move_to
   end
 
   def to_s
