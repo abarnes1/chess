@@ -2,7 +2,8 @@
 
 require_relative 'pawn'
 
-class BlackPawn < Pawn
+# Pawns that traditonally start on rank 7 for the black player.
+class BlackPawn < ChessPiece
   include Positioning
 
   def initialize(icon: "\u265F", position: nil, owner: nil)
@@ -23,7 +24,7 @@ class BlackPawn < Pawn
     [Offset.new([-1, -1]), Offset.new([1, -1])]
   end
 
-  def can_promote?(position)
+  def promote_at?(position)
     position.rank == '1'
   end
 end
