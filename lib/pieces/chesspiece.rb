@@ -3,6 +3,8 @@
 require_relative '../movement/offset'
 require_relative '../movement/repeat_offset'
 
+# Implementation of ChessPiece interface that child classes
+# of specific pieces can implement or override.
 class ChessPiece
   attr_accessor :position
   attr_reader :notation_letter, :owner
@@ -25,5 +27,13 @@ class ChessPiece
 
   def to_s
     @icon
+  end
+
+  def promote_at?(_position)
+    false
+  end
+
+  def must_protect?
+    false
   end
 end
