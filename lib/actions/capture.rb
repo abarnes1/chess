@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'action'
-
 # A basic chess move where one piece moves from its current
 # square to another square occupied by an enemy piece.
 class Capture < Action
@@ -37,7 +35,7 @@ class Capture < Action
   end
 
   def apply(game_state)
-    game_state.add_action(self)
+    game_state.log_action(self)
 
     @captured = game_state.select_by_position(move_to)
     piece.position = move_to
