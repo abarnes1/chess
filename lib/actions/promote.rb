@@ -1,5 +1,7 @@
-require_relative 'action'
+# frozen_string_literal: true
 
+# Chess action where a piece can be exchanged for another when
+# reaching a position on a standard chessboard.
 class Promote < Action
   attr_accessor :promote_to
   attr_reader :move_to, :piece
@@ -32,7 +34,7 @@ class Promote < Action
   end
 
   def apply(game_state)
-    game_state.add_action(self)
+    game_state.log_action(self)
 
     game_state.remove_piece(piece)
     game_state.add_piece(promote_to)
