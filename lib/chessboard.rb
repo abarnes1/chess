@@ -64,8 +64,6 @@ class Chessboard
     return if actions.nil? || actions.empty?
 
     actions.each do |action|
-      puts action.class.name
-
       destination = select(action.move_to)
 
       destination.bg_highlight = action_background_color(action)
@@ -126,6 +124,8 @@ class Chessboard
       Colors::BG_BRIGHT_GREEN
     when PromoteCapture
       Colors::BG_MAGENTA
+    when EnPassant
+      Colors::BG_RED
     end
   end
 end
