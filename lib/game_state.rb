@@ -17,7 +17,7 @@ class GameState
   end
 
   def promote?(piece, position)
-    piece.respond_to?(:promote_at?) && piece.promote_at?(position)
+    piece.can_promote_at?(position)
   end
 
   def blocked_at?(position)
@@ -55,10 +55,17 @@ class GameState
   end
 
   def last_moves(count)
-    to_display = action_log.reverse[0..count]
-    to_display.join("\n")
+    return [] if action_log.empty?
+
+    action_log.reverse[0..count]
   end
 
+  def last_moves_notation(count)
+    return [] if action_log.empty?
+
+    to_display = action_log.reverse[0..count]
+    to_display.reverse.join("\n")
+  end
   # can single square be attacked by any of my pieces
   def attackable?(position)
     raise NotImplementedError

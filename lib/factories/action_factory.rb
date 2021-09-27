@@ -15,8 +15,6 @@ class ActionFactory
     moves = []
 
     Action.registered_children.each do |action_type|
-      next unless [Move, Capture, Promote, PromoteCapture].include? action_type
-
       moves << action_type.create_for(piece, game_state)
     end
 
