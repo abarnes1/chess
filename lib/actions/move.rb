@@ -35,7 +35,7 @@ class Move < Action
   end
 
   def apply(game_state)
-    game_state.add_action(self)
+    game_state.log_action(self)
     piece.position = move_to
   end
 
