@@ -61,6 +61,8 @@ class Chessboard
   end
 
   def highlight_actions(actions)
+    return if actions.nil? || actions.empty?
+
     actions.each do |action|
       puts action.class.name
 
@@ -122,6 +124,8 @@ class Chessboard
       Colors::BG_RED
     when Promote
       Colors::BG_BRIGHT_GREEN
+    when PromoteCapture
+      Colors::BG_MAGENTA
     end
   end
 end
