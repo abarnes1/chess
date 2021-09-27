@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'pawn'
-
 # Pawns that traditonally start on rank 2 for the white player.
 class WhitePawn < ChessPiece
   include Positioning
@@ -27,7 +25,36 @@ class WhitePawn < ChessPiece
     ]
   end
 
-  def promote_at?(position)
+  def can_promote_at?(position)
     position.rank == '8'
+  end
+
+  def can_en_passant?(game_state)
+    previous_move = game_state.last_moves(1)[0]
+
+    return false if previous_move.nil?
+
+    if previous_move.piece.is_a?(BlackPawn) && valid_en_passant_target(previous_move)
+      true
+    else
+      false
+    end
+  end
+
+  private
+
+  def valid_en_passant_target(last_move)
+    passed_my_capture?(last_move) && neighbor_by_file?(last_move.piece) && last_move.piece.owner != owner
+  end
+
+  def passed_my_capture?(last_move)
+    (last_move.move_from.rank.to_i - position.rank.to_i) == 2
+  end
+
+  def neighbor_by_file?(piece)
+    enemy_file = piece.position.file.ord
+    my_file = position.file.ord
+
+    (enemy_file - my_file).abs == 1
   end
 end

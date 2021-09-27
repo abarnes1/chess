@@ -29,7 +29,11 @@ class ChessPiece
     @icon
   end
 
-  def promote_at?(_position)
+  def can_promote_at?(_position)
+    false
+  end
+
+  def can_en_passant?(_game_state)
     false
   end
 
