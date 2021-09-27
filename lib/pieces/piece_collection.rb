@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'chesspiece'
+# require_relative 'chesspiece'
 
 # A set of chess pieces, both friend and foe.
 class PieceCollection
