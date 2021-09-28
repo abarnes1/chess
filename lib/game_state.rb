@@ -7,7 +7,7 @@
 class GameState
   attr_reader :piece_collection, :action_log
 
-  def initialize(piece_collection = nil, action_log = [])
+  def initialize(piece_collection, action_log = [])
     @piece_collection = piece_collection
     @action_log = action_log
   end
@@ -66,13 +66,34 @@ class GameState
     to_display = action_log.reverse[0..count]
     to_display.reverse.join("\n")
   end
-  # can single square be attacked by any of my pieces
-  def attackable?(position)
-    raise NotImplementedError
+
+  def moved?(piece)
+    action_log.any? { |action| action.piece == piece }
+  end
+
+  def friendly_pieces(owner)
+    piece_collection.friendly_pieces(owner)
+  end
+
+  # can single square be attacked by any of the enemy pieces
+  def attackable_by_enemy?(owner, position)
+    enemy_pieces = piece_collection.enemy_pieces(owner)
+
+    enemy_pieces.each do |piece|
+      actions = ActionFactory.actions_for(piece, self)
+      actions.any? do |action|
+        if action.move_to == position
+          # puts "#{piece} at #{piece.position} can attack #{position}"
+          return true
+        end
+      end
+    end
+
+    false
   end
 
   # get all pieces that can attack a square
-  def pieces_that_attack(position)
+  def enemy_can_attack?(position)
     raise NotImplementedError
   end
 end
