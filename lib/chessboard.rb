@@ -126,6 +126,8 @@ class Chessboard
       Colors::BG_MAGENTA
     when EnPassant
       Colors::BG_RED
+    when Castling
+      Colors::BG_GREEN
     end
   end
 end
