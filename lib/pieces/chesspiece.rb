@@ -40,4 +40,16 @@ class ChessPiece
   def must_protect?
     false
   end
+
+  def can_castle?(_game_state)
+    false
+  end
+
+  def castling_partner?
+    false
+  end
+
+  def valid_castling_partners(_game_state)
+    nil
+  end
 end
