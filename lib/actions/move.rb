@@ -23,7 +23,7 @@ class Move < Action
 
     sequences.each do |sequence|
       sequence.each do |position|
-        break if game_state.blocked_at?(position)
+        break if game_state.occupied_at?(position)
 
         move = new(piece, piece.position, position) unless game_state.promote?(piece, position)
 

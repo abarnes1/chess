@@ -51,7 +51,7 @@ class PromoteCapture < Action
 
   def self.first_capturable_piece(piece, game_state, sequence)
     sequence.each do |position|
-      break if game_state.blocked_by_friendly?(piece.owner, position)
+      break if game_state.friendly_at?(piece.owner, position)
 
       next unless game_state.enemy_at?(piece.owner, position)
 

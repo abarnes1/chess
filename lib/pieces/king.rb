@@ -76,9 +76,9 @@ class King < ChessPiece
   end
 
   def castling_valid_left?(game_state, _partner_piece)
-    blocked = game_state.blocked_at?(Position.new("b#{position.rank}")) ||
-                       game_state.blocked_at?(Position.new("c#{position.rank}")) ||
-                       game_state.blocked_at?(Position.new("d#{position.rank}"))
+    blocked = game_state.occupied_at?(Position.new("b#{position.rank}")) ||
+                       game_state.occupied_at?(Position.new("c#{position.rank}")) ||
+                       game_state.occupied_at?(Position.new("d#{position.rank}"))
 
     crosses_attackable_square = game_state.attackable_by_enemy?(owner, Position.new("c#{position.rank}")) ||
                                 game_state.attackable_by_enemy?(owner, Position.new("d#{position.rank}"))
@@ -87,8 +87,8 @@ class King < ChessPiece
   end
 
   def castling_valid_right?(game_state, _partner_piece)
-    blocked = game_state.blocked_at?(Position.new("f#{position.rank}")) ||
-              game_state.blocked_at?(Position.new("g#{position.rank}"))
+    blocked = game_state.occupied_at?(Position.new("f#{position.rank}")) ||
+              game_state.occupied_at?(Position.new("g#{position.rank}"))
 
     crosses_attackable_square = game_state.attackable_by_enemy?(owner, Position.new("f#{position.rank}")) ||
                                 game_state.attackable_by_enemy?(owner, Position.new("g#{position.rank}"))
@@ -103,4 +103,13 @@ class King < ChessPiece
       [Position.new('a8'), Position.new('h8')]
     end
   end
+
+  # king can not have moved
+    # game_state.moved?(self)
+  # rook can not have moved
+   # game_state.moved?(partner)
+  # king can't be in check
+   # attackable on current square
+  # king can't pass through check
+   # get path and check game_state.attackable()
 end

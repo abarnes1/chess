@@ -1,16 +1,68 @@
 # frozen_string_literal: true
 
-# Wrapper for the state of a game of Chess that can answer
+require_relative 'factories/action_factory'
+
+require_relative 'pieces/bishop'
+require_relative 'pieces/rook'
+require_relative 'pieces/king'
+require_relative 'pieces/white_pawn'
+require_relative 'pieces/black_pawn'
+
+# Class for the state of a game of Chess that can answer
 # questions necessary to generate piece actions.  Exists to
 # simplify questions about aspects of the game state for action
 # creation without adding a bunch of methods to the Action class(es).
 class GameState
-  attr_reader :piece_collection, :action_log
+  attr_reader :pieces, :action_log
 
-  def initialize(piece_collection, action_log = [])
-    @piece_collection = piece_collection
+  def initialize(pieces = [], action_log = [])
+    @pieces = pieces
     @action_log = action_log
   end
+
+  def add_piece(piece)
+    pieces << piece
+  end
+
+  def remove_piece(piece)
+    pieces.delete(piece)
+  end
+
+  def occupied_at?(position)
+    piece = select_by_position(position)
+
+    piece.nil? ? false : true
+  end
+
+  def friendly_at?(friendly_owner, position)
+    piece = select_by_position(position)
+
+    return false if piece.nil?
+
+    piece.owner == friendly_owner
+  end
+
+  def enemy_at?(friendly_owner, position)
+    piece = select_by_position(position)
+
+    return false if piece.nil?
+
+    piece.owner != friendly_owner
+  end
+
+  def friendly_pieces(owner)
+    pieces.select { |piece| piece.owner == owner }
+  end
+
+  def enemy_pieces(owner)
+    pieces.reject { |piece| piece.owner == owner }
+  end
+
+  def select_by_position(position)
+    pieces.find { |piece| piece.position == position }
+  end
+
+  # good above here
 
   def clone
     Marshal.load(Marshal.dump(self))
@@ -18,36 +70,6 @@ class GameState
 
   def promote?(piece, position)
     piece.can_promote_at?(position)
-  end
-
-  def blocked_at?(position)
-    return false if piece_collection.nil?
-
-    piece_collection.occupied_at?(position)
-  end
-
-  def blocked_by_friendly?(owner, position)
-    return false if piece_collection.nil?
-
-    piece_collection.friendly_at?(owner, position)
-  end
-
-  def enemy_at?(owner, position)
-    return false if piece_collection.nil?
-
-    piece_collection.enemy_at?(owner, position)
-  end
-
-  def select_by_position(position)
-    piece_collection.select_by_position(position)
-  end
-
-  def add_piece(piece)
-    piece_collection.add(piece)
-  end
-
-  def remove_piece(piece)
-    piece_collection.remove(piece)
   end
 
   def log_action(action)
@@ -71,13 +93,9 @@ class GameState
     action_log.any? { |action| action.piece == piece }
   end
 
-  def friendly_pieces(owner)
-    piece_collection.friendly_pieces(owner)
-  end
-
   # can single square be attacked by any of the enemy pieces
-  def attackable_by_enemy?(owner, position)
-    enemy_pieces = piece_collection.enemy_pieces(owner)
+  def attackable_by_enemy?(friendly_owner, position)
+    enemy_pieces = enemy_pieces(friendly_owner)
 
     enemy_pieces.each do |piece|
       actions = ActionFactory.actions_for(piece, self)
@@ -90,10 +108,5 @@ class GameState
     end
 
     false
-  end
-
-  # get all pieces that can attack a square
-  def enemy_can_attack?(position)
-    raise NotImplementedError
   end
 end

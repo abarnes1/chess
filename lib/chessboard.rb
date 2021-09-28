@@ -52,8 +52,8 @@ class Chessboard
     squares.find { |square| square.position == position }
   end
 
-  def display_piece_collection(collection)
-    collection.pieces.each do |piece|
+  def display_pieces(pieces)
+    pieces.each do |piece|
       square = select(piece.position)
       square.piece = piece
       square.color = piece_color(piece.owner)

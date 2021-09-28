@@ -16,8 +16,6 @@ class Capture < Action
 
   # def self.create_for(piece, piece_collection, _move_log)
   def self.create_for(piece, game_state)
-    return [] if game_state.piece_collection.nil?
-
     moves = []
 
     sequences = calculate_sequences(piece.position, piece.capture_offsets)
@@ -53,7 +51,7 @@ class Capture < Action
 
   def self.first_capturable_piece(piece, game_state, sequence)
     sequence.each do |position|
-      break if game_state.blocked_by_friendly?(piece.owner, position)
+      break if game_state.friendly_at?(piece.owner, position)
 
       next unless game_state.enemy_at?(piece.owner, position)
 
