@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative 'chesspiece'
-require_relative '../modules/positioning'
 
 class Bishop < ChessPiece
   include Positioning
