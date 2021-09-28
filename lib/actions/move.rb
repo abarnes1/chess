@@ -13,7 +13,7 @@ class Move < Action
     @move_to = move_to
     @move_from = move_from
 
-    puts "initializing #{self}"
+    # puts "initializing #{self}"
   end
 
   def self.create_for(piece, game_state)
