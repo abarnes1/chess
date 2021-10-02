@@ -28,7 +28,7 @@ class Move < Action
     valid_sequences = stop_many_after_collision(sequences, game_state)
     valid_sequences.each do |sequence|
       sequence.each do |position|
-        move = new(piece, piece.position, position) unless game_state.promote?(piece, position)
+        move = new(piece, piece.position, position) unless piece.can_promote_at?(position)
         break if game_state.occupied_at?(position)
 
         moves << move

@@ -11,10 +11,9 @@ class Capture < Action
     @move_to = move_to
     @move_from = move_from
     @captured = captured
-    puts "initializing #{self}"
+    # puts "initializing #{self}"
   end
 
-  # def self.create_for(piece, piece_collection, _move_log)
   def self.create_for(piece, game_state)
     moves = []
 
@@ -55,8 +54,8 @@ class Capture < Action
 
       next unless game_state.enemy_at?(piece.owner, position)
 
-      capture_piece = game_state.select_by_position(position)
-      return capture_piece unless game_state.promote?(piece, position)
+      capture_piece = game_state.select_position(position)
+      return capture_piece unless piece.can_promote_at?(position)
     end
 
     nil

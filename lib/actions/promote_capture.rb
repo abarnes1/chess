@@ -55,8 +55,8 @@ class PromoteCapture < Action
 
       next unless game_state.enemy_at?(piece.owner, position)
 
-      capture_piece = game_state.select_by_position(position)
-      return capture_piece if game_state.promote?(piece, position)
+      capture_piece = game_state.select_position(position)
+      return capture_piece if piece.can_promote_at?(position)
     end
 
     nil
