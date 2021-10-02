@@ -23,7 +23,7 @@ class King < ChessPiece
     @notation_letter = 'K'
   end
 
-  def must_protect?
+  def can_be_checked?
     true
   end
 
@@ -103,13 +103,4 @@ class King < ChessPiece
       [Position.new('a8'), Position.new('h8')]
     end
   end
-
-  # king can not have moved
-    # game_state.moved?(self)
-  # rook can not have moved
-   # game_state.moved?(partner)
-  # king can't be in check
-   # attackable on current square
-  # king can't pass through check
-   # get path and check game_state.attackable()
 end
