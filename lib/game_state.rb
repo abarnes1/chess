@@ -29,13 +29,13 @@ class GameState
   end
 
   def occupied_at?(position)
-    piece = select_by_position(position)
+    piece = select_position(position)
 
     piece.nil? ? false : true
   end
 
   def friendly_at?(friendly_owner, position)
-    piece = select_by_position(position)
+    piece = select_position(position)
 
     return false if piece.nil?
 
@@ -43,7 +43,7 @@ class GameState
   end
 
   def enemy_at?(friendly_owner, position)
-    piece = select_by_position(position)
+    piece = select_position(position)
 
     return false if piece.nil?
 
@@ -58,18 +58,21 @@ class GameState
     pieces.reject { |piece| piece.owner == owner }
   end
 
-  def select_by_position(position)
+  def select_position(position)
     pieces.find { |piece| piece.position == position }
+  end
+
+  def select_piece(piece)
+    pieces.find { |searched_piece| searched_piece == piece }
   end
 
   # good above here
 
-  def clone
-    Marshal.load(Marshal.dump(self))
-  end
+  def checkable_pieces(owner)
+    pieces = friendly_pieces(owner)
 
-  def promote?(piece, position)
-    piece.can_promote_at?(position)
+    # pieces.select { |piece| piece.can_be_checked? }
+    pieces.select(&:can_be_checked?)
   end
 
   def log_action(action)
@@ -99,14 +102,33 @@ class GameState
 
     enemy_pieces.each do |piece|
       actions = ActionFactory.actions_for(piece, self)
-      actions.any? do |action|
-        if action.move_to == position
-          # puts "#{piece} at #{piece.position} can attack #{position}"
-          return true
-        end
-      end
+      actions.any? { |action| return true if action.move_to == position }
     end
 
     false
+  end
+
+  def in_check?(owner)
+    checkable_pieces = checkable_pieces(owner)
+    checkable_pieces.each { |piece| puts "   #{piece} at #{piece.position}" }
+    result = checkable_pieces.any? { |piece| attackable_by_enemy?(piece.owner, piece.position) }
+    puts "  in_check? #{result}"
+    result
+  end
+
+  def apply_action(action)
+    action.apply(self)
+    action_log << action
+  end
+
+  def undo_last_action
+    action = action_log.pop
+    action.undo(self)
+  end
+
+  def legal_state?(owner)
+    return false if in_check?(owner)
+
+    true
   end
 end
