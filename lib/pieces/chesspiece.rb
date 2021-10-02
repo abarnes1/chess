@@ -37,7 +37,7 @@ class ChessPiece
     false
   end
 
-  def must_protect?
+  def can_be_checked?
     false
   end
 
