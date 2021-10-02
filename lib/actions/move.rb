@@ -16,16 +16,20 @@ class Move < Action
     # puts "initializing #{self}"
   end
 
+  # Create psuedo legal movements.  These are movements that can be made given
+  # the game's state, but do not take into account whether or not the completed
+  # move leaves the board in an illegal state. An illegal state primarily means
+  # that the king would be left vulnerable to attack after the move is made,
+  # although this behavior is up to the GameState class.
   def self.create_for(piece, game_state)
     moves = []
 
     sequences = calculate_sequences(piece.position, piece.move_offsets)
-
-    sequences.each do |sequence|
+    valid_sequences = stop_many_after_collision(sequences, game_state)
+    valid_sequences.each do |sequence|
       sequence.each do |position|
-        break if game_state.occupied_at?(position)
-
         move = new(piece, piece.position, position) unless game_state.promote?(piece, position)
+        break if game_state.occupied_at?(position)
 
         moves << move
       end
@@ -34,9 +38,12 @@ class Move < Action
     moves
   end
 
-  def apply(game_state)
-    game_state.log_action(self)
+  def apply(_game_state)
     piece.position = move_to
+  end
+
+  def undo(_game_state)
+    piece.position = move_from
   end
 
   def to_s
