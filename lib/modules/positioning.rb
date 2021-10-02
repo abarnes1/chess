@@ -8,9 +8,7 @@ require_relative '../movement/repeat_offset'
 # if they are inside the bounds of a normal chessboard.
 module Positioning
   def next_position(position, offset)
-    return nil if position.nil?
-
-    # return nil if offset.nil? || offset.out_of_range?
+    return nil if position.nil? || offset.nil?
 
     new_position = Position.new(calculate_file(position.file, offset.x) + calculate_rank(position.rank, offset.y))
     new_position.inbounds? ? new_position : nil
@@ -45,6 +43,28 @@ module Positioning
     end
 
     sequence
+  end
+
+  def stop_many_after_collision(sequences, game_state)
+    output = []
+
+    sequences.each do |sequence|
+      output << stop_after_collision(sequence, game_state)
+    end
+
+    output
+  end
+
+  def stop_after_collision(sequence, game_state)
+    output = []
+
+    sequence.each do |position|
+      output << position
+
+      break if game_state.occupied_at?(position)
+    end
+
+    output
   end
 
   private
