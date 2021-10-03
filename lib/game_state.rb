@@ -71,7 +71,6 @@ class GameState
   def checkable_pieces(owner)
     pieces = friendly_pieces(owner)
 
-    # pieces.select { |piece| piece.can_be_checked? }
     pieces.select(&:can_be_checked?)
   end
 
@@ -110,10 +109,7 @@ class GameState
 
   def in_check?(owner)
     checkable_pieces = checkable_pieces(owner)
-    checkable_pieces.each { |piece| puts "   #{piece} at #{piece.position}" }
-    result = checkable_pieces.any? { |piece| attackable_by_enemy?(piece.owner, piece.position) }
-    puts "  in_check? #{result}"
-    result
+    checkable_pieces.any? { |piece| attackable_by_enemy?(piece.owner, piece.position) }
   end
 
   def apply_action(action)
