@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'chesspiece'
+
 # Pawns that traditonally start on rank 7 for the black player.
 class BlackPawn < ChessPiece
   include Positioning

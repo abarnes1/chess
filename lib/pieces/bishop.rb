@@ -2,6 +2,7 @@
 
 require_relative 'chesspiece'
 
+# Standard bishop for a game of chess.
 class Bishop < ChessPiece
   include Positioning
 

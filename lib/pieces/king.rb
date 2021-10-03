@@ -3,6 +3,8 @@
 require_relative 'chesspiece'
 require_relative '../modules/positioning'
 
+# Standard king for a game of chess.  Handles special moves,
+# like castling, for white and black.
 class King < ChessPiece
   include Positioning
 
@@ -11,13 +13,13 @@ class King < ChessPiece
 
     @offsets = [
       Offset.new([-1, -1]),
-      Offset.new([-1,  1]),
-      Offset.new([1, -1]),
-      Offset.new([1,  1]),
-      Offset.new([0, -1]),
-      Offset.new([0,  1]),
+      Offset.new([-1, 1]),
       Offset.new([-1, 0]),
-      Offset.new([1,  0])
+      Offset.new([1, 0]),
+      Offset.new([1, -1]),
+      Offset.new([1, 1]),
+      Offset.new([0, -1]),
+      Offset.new([0, 1])
     ]
 
     @notation_letter = 'K'
@@ -77,8 +79,8 @@ class King < ChessPiece
 
   def castling_valid_left?(game_state, _partner_piece)
     blocked = game_state.occupied_at?(Position.new("b#{position.rank}")) ||
-                       game_state.occupied_at?(Position.new("c#{position.rank}")) ||
-                       game_state.occupied_at?(Position.new("d#{position.rank}"))
+              game_state.occupied_at?(Position.new("c#{position.rank}")) ||
+              game_state.occupied_at?(Position.new("d#{position.rank}"))
 
     crosses_attackable_square = game_state.attackable_by_enemy?(owner, Position.new("c#{position.rank}")) ||
                                 game_state.attackable_by_enemy?(owner, Position.new("d#{position.rank}"))
