@@ -18,7 +18,7 @@ class EnPassant < Action
 
     return nil unless piece.can_en_passant?(game_state)
 
-    capture_positions = calculate_sequences(piece.position, piece.capture_offsets).flatten
+    capture_positions = calculate_sequence_set(piece.position, piece.capture_offsets).flatten
     previous_move = game_state.last_moves(1)[0]
 
     capture_positions.each do |position|

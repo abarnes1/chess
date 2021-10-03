@@ -25,13 +25,13 @@ class Castling < Action
     moves = []
 
     partners.each do |partner|
-      destination = calculate_single_sequence(piece.position, Offset.new([2, 0]))[0]
+      destination = calculate_sequence(piece.position, Offset.new([2, 0]))[0]
       distance = distance(piece, partner)
-      partner_destination = calculate_single_sequence(partner.position, Offset.new([-distance, 0]))[0]
+      partner_destination = calculate_sequence(partner.position, Offset.new([-distance, 0]))[0]
 
         if (left_castle?(piece, partner))
-          destination = calculate_single_sequence(piece.position, Offset.new([-2, 0]))[0]
-          partner_destination = calculate_single_sequence(partner.position, Offset.new([distance, 0]))[0]
+          destination = calculate_sequence(piece.position, Offset.new([-2, 0]))[0]
+          partner_destination = calculate_sequence(partner.position, Offset.new([distance, 0]))[0]
         end
 
         castling = new(piece, piece.position, destination, partner, partner.position, partner_destination)

@@ -17,7 +17,7 @@ class PromoteCapture < Action
   def self.create_for(piece, game_state)
     moves = []
 
-    sequences = calculate_sequences(piece.position, piece.capture_offsets)
+    sequences = calculate_sequence_set(piece.position, piece.capture_offsets)
 
     sequences.each do |sequence|
       capturable_piece = first_capturable_piece(piece, game_state, sequence)

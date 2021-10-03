@@ -14,7 +14,7 @@ module Positioning
     new_position.inbounds? ? new_position : nil
   end
 
-  def calculate_sequences(position, offsets)
+  def calculate_sequence_set(position, offsets)
     return [] if offsets.nil?
 
     sequences = []
@@ -45,17 +45,17 @@ module Positioning
     sequence
   end
 
-  def stop_many_after_collision(sequences, game_state)
+  def trim_set_to_psuedo_legal(sequences, game_state)
     output = []
 
     sequences.each do |sequence|
-      output << stop_after_collision(sequence, game_state)
+      output << trim_sequence_to_psuedo_legal(sequence, game_state)
     end
 
     output
   end
 
-  def stop_after_collision(sequence, game_state)
+  def trim_sequence_to_psuedo_legal(sequence, game_state)
     output = []
 
     sequence.each do |position|

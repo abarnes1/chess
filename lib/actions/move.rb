@@ -22,8 +22,8 @@ class Move < Action
   def self.create_for(piece, game_state)
     moves = []
 
-    sequences = calculate_sequences(piece.position, piece.move_offsets)
-    valid_sequences = stop_many_after_collision(sequences, game_state)
+    sequences = calculate_sequence_set(piece.position, piece.move_offsets)
+    valid_sequences = trim_set_to_psuedo_legal(sequences, game_state)
     valid_sequences.each do |sequence|
       sequence.each do |position|
         move = new(piece, piece.position, position) unless piece.can_promote_at?(position)

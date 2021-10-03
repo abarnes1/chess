@@ -63,21 +63,21 @@ describe PositioningModuleTestClass do
     end
   end
 
-  context '#calculate_single_sequence' do
+  context '#calculate_sequence' do
     let(:start_position) { Position.new('c4') }
 
     context 'when parameter position is invalid' do
       let(:valid_offset) { Offset.new([1, 1]) }
 
       it 'returns empty array when position is nil' do
-        actual = position_tester.calculate_single_sequence(nil, valid_offset)
+        actual = position_tester.calculate_sequence(nil, valid_offset)
         expect(actual).to eq([])
       end
 
       it 'returns empty array when position out of range' do
         out_of_range_position = Position.new('z9')
 
-        actual = position_tester.calculate_single_sequence(out_of_range_position, valid_offset)
+        actual = position_tester.calculate_sequence(out_of_range_position, valid_offset)
         expect(actual).to eq([])
       end
     end
@@ -86,12 +86,12 @@ describe PositioningModuleTestClass do
       let(:out_of_range_offset) { Offset.new([777, 777]) }
       
       it 'returns empty array when offset is nil' do
-        actual = position_tester.calculate_single_sequence(start_position, nil)
+        actual = position_tester.calculate_sequence(start_position, nil)
         expect(actual).to eq([])
       end
 
       it 'returns empty array when no valid positions can be calculated' do
-        actual = position_tester.calculate_single_sequence(start_position, out_of_range_offset)
+        actual = position_tester.calculate_sequence(start_position, out_of_range_offset)
         expect(actual).to eq([])
       end
     end
@@ -102,7 +102,7 @@ describe PositioningModuleTestClass do
       it 'returns a single valid position' do
         expected = [ Position.new('d5') ]
 
-        actual = position_tester.calculate_single_sequence(start_position, single_offset)
+        actual = position_tester.calculate_sequence(start_position, single_offset)
   
         expect(actual).to eq(expected)
       end
@@ -117,7 +117,7 @@ describe PositioningModuleTestClass do
           Position.new('e6'),
         ]
   
-        actual = position_tester.calculate_single_sequence(start_position, repeating_offset)
+        actual = position_tester.calculate_sequence(start_position, repeating_offset)
   
         expect(actual).to eq(expected)
       end
@@ -134,14 +134,14 @@ describe PositioningModuleTestClass do
           Position.new('g8')
         ]
   
-        actual = position_tester.calculate_single_sequence(start_position, repeating_offset)
+        actual = position_tester.calculate_sequence(start_position, repeating_offset)
   
         expect(actual).to eq(expected)
       end
     end
   end
 
-  context '#calculate_sequences' do
+  context '#calculate_sequence_set' do
     let(:start_position) { Position.new('c4') }
 
     it 'contains no empty sequences' do
@@ -154,7 +154,7 @@ describe PositioningModuleTestClass do
         [Position.new('e6'), Position.new('g8')]
       ]
 
-      actual = position_tester.calculate_sequences(start_position, offsets)
+      actual = position_tester.calculate_sequence_set(start_position, offsets)
       expect(actual).to eq(expected)
     end
 
@@ -172,7 +172,7 @@ describe PositioningModuleTestClass do
         [Position.new('d5')]
       ]
 
-      actual = position_tester.calculate_sequences(start_position, offsets)
+      actual = position_tester.calculate_sequence_set(start_position, offsets)
       expect(actual).to eq(expected)
     end
   end
