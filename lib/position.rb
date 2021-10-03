@@ -5,6 +5,8 @@ class Position
   attr_reader :rank, :file
 
   def initialize(position)
+    return nil if position.nil?
+
     @file = position[0] # alpha column
     @rank = position[1] # numerical row
   end

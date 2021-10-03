@@ -74,6 +74,11 @@ module Positioning
   end
 
   def calculate_file(file, x_offset)
-    (file.ord + x_offset).chr
+    new_file = file.ord + x_offset
+
+    # Ruby valid character range 0-255
+    return 255.chr unless new_file.between?(0, 255)
+
+    new_file.chr
   end
 end
