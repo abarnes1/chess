@@ -11,10 +11,11 @@ class EnPassant < Action
     @move_to = move_to
     @move_from = move_from
     @captured = captured
-    puts "initializing #{self}"
   end
 
   def self.create_for(piece, game_state)
+    actions = []
+
     return nil unless piece.can_en_passant?(game_state)
 
     capture_positions = calculate_sequences(piece.position, piece.capture_offsets).flatten
@@ -24,23 +25,26 @@ class EnPassant < Action
       next unless previous_move.move_to.file == position.file
 
       en_passant = new(piece, piece.position, position, previous_move.piece)
-      return en_passant
+      actions << en_passant
     end
 
-    nil
+    actions
   end
 
   def apply(game_state)
-    game_state.log_action(self)
-
-    @captured = game_state.select_by_position(move_to)
     piece.position = move_to
 
     game_state.remove_piece(@captured)
   end
 
+  def undo(game_state)
+    piece.position = move_from
+
+    game_state.add_piece(@captured)
+  end
+
   def to_s
-    "en passant capture: #{@piece} from #{@move_from} to #{@move_to} and capture #{@captured}"
+    "en passant capture: #{@piece} from #{@move_from} to #{@move_to} and capture #{@captured} at #{@captured.position}"
   end
 
   def notation

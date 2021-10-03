@@ -11,7 +11,6 @@ class Capture < Action
     @move_to = move_to
     @move_from = move_from
     @captured = captured
-    # puts "initializing #{self}"
   end
 
   def self.create_for(piece, game_state)
@@ -32,12 +31,16 @@ class Capture < Action
   end
 
   def apply(game_state)
-    game_state.log_action(self)
-
-    @captured = game_state.select_by_position(move_to)
+    @captured = game_state.select_position(move_to)
     piece.position = move_to
 
     game_state.remove_piece(@captured)
+  end
+
+  def undo(game_state)
+    piece.position = move_from
+
+    game_state.add_piece(@captured)
   end
 
   def to_s

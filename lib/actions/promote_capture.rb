@@ -4,15 +4,14 @@
 # square to another square occupied by an enemy piece.
 class PromoteCapture < Action
   attr_accessor :promote_to
-  attr_reader :move_to, :piece
+  attr_reader :move_from, :move_to, :piece
 
-  def initialize(piece, move_from, move_to, captured, promote_to = '?')
+  def initialize(piece, move_from, move_to, captured, promote_to = nil)
     super
     @piece = piece
-    @promote_to = promote_to
+    @promote_to = promote_to.nil? ? ChessPiece.new(owner: piece.owner, icon: '?') : promote_to
     @move_to = move_to
-
-    puts "initializing #{self}"
+    @move_from = move_from
   end
 
   def self.create_for(piece, game_state)
@@ -33,12 +32,17 @@ class PromoteCapture < Action
   end
 
   def apply(game_state)
-    game_state.log_action(self)
-
     game_state.remove_piece(piece)
     game_state.add_piece(promote_to)
 
     promote_to.position = move_to
+  end
+
+  def undo(game_state)
+    game_state.remove_piece(promote_to)
+    game_state.add_piece(piece)
+
+    piece.position = move_from
   end
 
   def to_s

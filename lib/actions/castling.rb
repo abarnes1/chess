@@ -15,14 +15,11 @@ class Castling < Action
     @partner_piece = partner_piece
     @partner_move_from = partner_move_from
     @partner_move_to = partner_move_to
-
-    # puts "initializing #{self}"
   end
 
   def self.create_for(piece, game_state)
     return nil unless piece.can_castle?(game_state)
 
-    puts 'inside Castling.create_for'
     partners = piece.castling_partners(game_state)
 
     moves = []
@@ -47,10 +44,13 @@ class Castling < Action
   end
 
   def apply(game_state)
-    puts "applying castling: #{notation}"
-    game_state.log_action(self)
     piece.position = move_to
     partner_piece.position = partner_move_to
+  end
+
+  def undo(game_state)
+    piece.position = move_from
+    partner_piece.position = partner_move_from
   end
 
   def to_s

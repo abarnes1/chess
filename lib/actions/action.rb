@@ -31,6 +31,10 @@ class Action
     raise NotImplementedError
   end
 
+  def undo(game_state)
+    raise NotImplementedError
+  end
+
   def notation
     raise NotImplementedError
   end

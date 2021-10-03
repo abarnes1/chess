@@ -12,8 +12,6 @@ class Move < Action
     @piece = piece
     @move_to = move_to
     @move_from = move_from
-
-    # puts "initializing #{self}"
   end
 
   # Create psuedo legal movements.  These are movements that can be made given
