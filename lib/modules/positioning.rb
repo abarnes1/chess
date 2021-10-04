@@ -28,7 +28,7 @@ module Positioning
   end
 
   def calculate_single_sequence(position, offset)
-    return [] if offset.nil?
+    return [] if offset.nil? || position.nil?
 
     sequence = []
     max_repeats = offset.is_a?(RepeatOffset) ? offset.max_repeats : 1
@@ -52,10 +52,13 @@ module Positioning
       output << trim_sequence_to_psuedo_legal(sequence, game_state)
     end
 
-    output
+    output.compact.reject(&:empty?)
   end
 
   def trim_sequence_to_psuedo_legal(sequence, game_state)
+    return nil if sequence.nil?
+    return sequence if game_state.nil?
+
     output = []
 
     sequence.each do |position|

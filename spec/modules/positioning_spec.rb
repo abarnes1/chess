@@ -63,21 +63,21 @@ describe PositioningModuleTestClass do
     end
   end
 
-  context '#calculate_sequence' do
+  context '#calculate_single_sequence' do
     let(:start_position) { Position.new('c4') }
 
     context 'when parameter position is invalid' do
       let(:valid_offset) { Offset.new([1, 1]) }
 
       it 'returns empty array when position is nil' do
-        actual = position_tester.calculate_sequence(nil, valid_offset)
+        actual = position_tester.calculate_single_sequence(nil, valid_offset)
         expect(actual).to eq([])
       end
 
       it 'returns empty array when position out of range' do
         out_of_range_position = Position.new('z9')
 
-        actual = position_tester.calculate_sequence(out_of_range_position, valid_offset)
+        actual = position_tester.calculate_single_sequence(out_of_range_position, valid_offset)
         expect(actual).to eq([])
       end
     end
@@ -86,12 +86,12 @@ describe PositioningModuleTestClass do
       let(:out_of_range_offset) { Offset.new([777, 777]) }
       
       it 'returns empty array when offset is nil' do
-        actual = position_tester.calculate_sequence(start_position, nil)
+        actual = position_tester.calculate_single_sequence(start_position, nil)
         expect(actual).to eq([])
       end
 
       it 'returns empty array when no valid positions can be calculated' do
-        actual = position_tester.calculate_sequence(start_position, out_of_range_offset)
+        actual = position_tester.calculate_single_sequence(start_position, out_of_range_offset)
         expect(actual).to eq([])
       end
     end
@@ -102,7 +102,7 @@ describe PositioningModuleTestClass do
       it 'returns a single valid position' do
         expected = [ Position.new('d5') ]
 
-        actual = position_tester.calculate_sequence(start_position, single_offset)
+        actual = position_tester.calculate_single_sequence(start_position, single_offset)
   
         expect(actual).to eq(expected)
       end
@@ -117,7 +117,7 @@ describe PositioningModuleTestClass do
           Position.new('e6'),
         ]
   
-        actual = position_tester.calculate_sequence(start_position, repeating_offset)
+        actual = position_tester.calculate_single_sequence(start_position, repeating_offset)
   
         expect(actual).to eq(expected)
       end
@@ -134,7 +134,7 @@ describe PositioningModuleTestClass do
           Position.new('g8')
         ]
   
-        actual = position_tester.calculate_sequence(start_position, repeating_offset)
+        actual = position_tester.calculate_single_sequence(start_position, repeating_offset)
   
         expect(actual).to eq(expected)
       end
@@ -174,6 +174,115 @@ describe PositioningModuleTestClass do
 
       actual = position_tester.calculate_sequence_set(start_position, offsets)
       expect(actual).to eq(expected)
+    end
+  end
+
+  context '#trim_sequence_to_psuedo_legal' do
+    let(:valid_sequence) { [Position.new('a1'), Position.new('a2'), Position.new('a3')] }
+    let(:game_state) { double('game_state') }
+
+    context 'when sequence parameter is nil' do
+      it 'returns nil' do
+        actual = position_tester.trim_sequence_to_psuedo_legal(nil, game_state)
+
+        expect(actual).to be_nil
+      end
+    end
+
+    context 'when game_state parameter is nil' do
+      it 'returns the whole sequence' do
+        expected = valid_sequence
+        actual = position_tester.trim_sequence_to_psuedo_legal(valid_sequence, nil)
+
+        expect(actual).to eq(expected)
+      end
+    end
+
+    context 'when position sequence is not blocked' do
+      it 'returns the whole sequence' do
+        allow(game_state).to receive(:occupied_at?).exactly(3).times.and_return(false, false, false)
+        expected = [Position.new('a1'), Position.new('a2'), Position.new('a3')]
+
+        actual = position_tester.trim_sequence_to_psuedo_legal(valid_sequence, game_state)
+
+        expect(actual).to eq(expected)
+      end
+    end
+
+    context 'when position sequence blocked' do
+      it 'trims the sequence, including the blocked position' do
+        allow(game_state).to receive(:occupied_at?).twice.and_return(false, true)
+        expected = [Position.new('a1'), Position.new('a2')]
+
+        actual = position_tester.trim_sequence_to_psuedo_legal(valid_sequence, game_state)
+
+        expect(actual).to eq(expected)
+      end
+    end
+  end
+
+  context '#trim_set_to_psuedo_legal' do
+    let(:game_state) { double('game_state') }
+
+    context 'when multiple valid sequences are present' do
+      let(:valid_sequence_set) { [
+        [Position.new('a1'), Position.new('a2'), Position.new('a3')],
+        [Position.new('b1'), Position.new('b2'), Position.new('b3')]
+      ] }
+
+      it 'trims all sequences, including blocked positions' do
+        a_file_responses = [false, true]
+        b_file_responses = [true]
+        responses = a_file_responses + b_file_responses
+
+        allow(game_state).to receive(:occupied_at?).exactly(3).times.and_return(*responses)
+
+        expected = [
+          [Position.new('a1'), Position.new('a2')],
+          [Position.new('b1')]
+        ]
+
+        actual = position_tester.trim_set_to_psuedo_legal(valid_sequence_set, game_state)
+        expect(actual).to eq(expected)
+      end
+    end
+
+    context 'when an invalid sequence is present' do
+      context 'when a nil sequence is included' do
+        let(:sequence_set_with_nil) { [
+          [Position.new('a1'), Position.new('a2'), Position.new('a3')],
+          nil
+        ] }
+  
+        it 'ignores the nil sequence' do
+          allow(game_state).to receive(:occupied_at?).twice.and_return(false, true)
+  
+          expected = [
+            [Position.new('a1'), Position.new('a2')]
+          ]
+  
+          actual = position_tester.trim_set_to_psuedo_legal(sequence_set_with_nil, game_state)
+          expect(actual).to eq(expected)
+        end
+      end
+
+      context 'when an empty sequence is included' do
+        let(:sequence_set_with_nil) { [
+          [Position.new('a1'), Position.new('a2'), Position.new('a3')],
+          []
+        ] }
+  
+        it 'returns no empty arrays in the psuedo legal set' do
+          allow(game_state).to receive(:occupied_at?).twice.and_return(false, true)
+  
+          expected = [
+            [Position.new('a1'), Position.new('a2')]
+          ]
+  
+          actual = position_tester.trim_set_to_psuedo_legal(sequence_set_with_nil, game_state)
+          expect(actual).to eq(expected)
+        end
+      end
     end
   end
 end
