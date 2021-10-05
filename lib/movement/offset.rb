@@ -9,7 +9,9 @@ class Offset
     @y = coordinate[1]
   end
 
-  def out_of_range?
-    x.abs >= 8 || y.abs >= 8
+  def ==(other)
+    return false if other.nil?
+
+    x == other.x && y == other.y
   end
 end
