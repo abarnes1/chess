@@ -5,9 +5,7 @@ class Position
   attr_reader :rank, :file
 
   def initialize(position)
-    return nil if position.nil?
-
-    @file = position[0] # alpha column
+    @file = position[0].downcase # alpha column
     @rank = position[1] # numerical row
   end
 
@@ -26,6 +24,8 @@ class Position
   end
 
   def inbounds?
+    return false if file.nil? || rank.nil?
+
     ('a'..'h').include?(file) && ('1'..'8').include?(rank)
   end
 end
