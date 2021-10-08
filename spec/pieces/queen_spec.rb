@@ -233,6 +233,7 @@ describe Queen do
           it 'can move to b5' do
             expect(@queen_actions).to be_available_move(Position.new('b5'))
           end
+          
           it 'can move to a6' do
             expect(@queen_actions).to be_available_move(Position.new('a6'))
           end
