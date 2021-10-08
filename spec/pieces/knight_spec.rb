@@ -11,7 +11,7 @@ require_relative 'shared/piece_custom_matchers'
 describe Knight do
   subject(:knight) { described_class.new(position: Position.new('c4')) }
 
-  context '#capture_offsets' do
+  describe '#capture_offsets' do
     it 'has the correct capture offsets' do
       expected = [
         Offset.new([2, -1]),
@@ -30,7 +30,7 @@ describe Knight do
     end
   end
 
-  context '#movement_offsets' do
+  describe '#movement_offsets' do
     it 'has the correct movement offsets' do
       expected = [
         Offset.new([2, -1]),
