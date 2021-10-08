@@ -45,17 +45,17 @@ module Positioning
     sequence
   end
 
-  def trim_set_to_psuedo_legal(sequences, game_state)
+  def trim_set_after_collision(sequences, game_state)
     output = []
 
     sequences.each do |sequence|
-      output << trim_sequence_to_psuedo_legal(sequence, game_state)
+      output << trim_after_collision(sequence, game_state)
     end
 
     output.compact.reject(&:empty?)
   end
 
-  def trim_sequence_to_psuedo_legal(sequence, game_state)
+  def trim_after_collision(sequence, game_state)
     return nil if sequence.nil?
     return sequence if game_state.nil?
 

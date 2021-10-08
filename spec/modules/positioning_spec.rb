@@ -177,13 +177,13 @@ describe PositioningModuleTestClass do
     end
   end
 
-  context '#trim_sequence_to_psuedo_legal' do
+  context '#trim_after_collision' do
     let(:valid_sequence) { [Position.new('a1'), Position.new('a2'), Position.new('a3')] }
     let(:game_state) { double('game_state') }
 
     context 'when sequence parameter is nil' do
       it 'returns nil' do
-        actual = position_tester.trim_sequence_to_psuedo_legal(nil, game_state)
+        actual = position_tester.trim_after_collision(nil, game_state)
 
         expect(actual).to be_nil
       end
@@ -192,7 +192,7 @@ describe PositioningModuleTestClass do
     context 'when game_state parameter is nil' do
       it 'returns the whole sequence' do
         expected = valid_sequence
-        actual = position_tester.trim_sequence_to_psuedo_legal(valid_sequence, nil)
+        actual = position_tester.trim_after_collision(valid_sequence, nil)
 
         expect(actual).to eq(expected)
       end
@@ -203,7 +203,7 @@ describe PositioningModuleTestClass do
         allow(game_state).to receive(:occupied_at?).exactly(3).times.and_return(false, false, false)
         expected = [Position.new('a1'), Position.new('a2'), Position.new('a3')]
 
-        actual = position_tester.trim_sequence_to_psuedo_legal(valid_sequence, game_state)
+        actual = position_tester.trim_after_collision(valid_sequence, game_state)
 
         expect(actual).to eq(expected)
       end
@@ -214,7 +214,7 @@ describe PositioningModuleTestClass do
         allow(game_state).to receive(:occupied_at?).twice.and_return(false, true)
         expected = [Position.new('a1'), Position.new('a2')]
 
-        actual = position_tester.trim_sequence_to_psuedo_legal(valid_sequence, game_state)
+        actual = position_tester.trim_after_collision(valid_sequence, game_state)
 
         expect(actual).to eq(expected)
       end
@@ -242,7 +242,7 @@ describe PositioningModuleTestClass do
           [Position.new('b1')]
         ]
 
-        actual = position_tester.trim_set_to_psuedo_legal(valid_sequence_set, game_state)
+        actual = position_tester.trim_set_after_collision(valid_sequence_set, game_state)
         expect(actual).to eq(expected)
       end
     end
@@ -261,7 +261,7 @@ describe PositioningModuleTestClass do
             [Position.new('a1'), Position.new('a2')]
           ]
   
-          actual = position_tester.trim_set_to_psuedo_legal(sequence_set_with_nil, game_state)
+          actual = position_tester.trim_set_after_collision(sequence_set_with_nil, game_state)
           expect(actual).to eq(expected)
         end
       end
@@ -279,7 +279,7 @@ describe PositioningModuleTestClass do
             [Position.new('a1'), Position.new('a2')]
           ]
   
-          actual = position_tester.trim_set_to_psuedo_legal(sequence_set_with_nil, game_state)
+          actual = position_tester.trim_set_after_collision(sequence_set_with_nil, game_state)
           expect(actual).to eq(expected)
         end
       end

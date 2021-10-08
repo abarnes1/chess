@@ -23,11 +23,12 @@ class Move < Action
     moves = []
 
     sequences = calculate_sequence_set(piece.position, piece.move_offsets)
-    valid_sequences = trim_set_to_psuedo_legal(sequences, game_state)
+    valid_sequences = trim_set_after_collision(sequences, game_state)
     valid_sequences.each do |sequence|
       sequence.each do |position|
         move = new(piece, piece.position, position) unless piece.can_promote_at?(position)
-        break if game_state.occupied_at?(position)
+
+        break if !game_state.nil? && game_state.occupied_at?(position)
 
         moves << move
       end
