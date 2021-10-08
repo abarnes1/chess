@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'chesspiece'
+
 # Pawns that traditonally start on rank 2 for the white player.
 class WhitePawn < ChessPiece
   include Positioning
@@ -7,7 +9,7 @@ class WhitePawn < ChessPiece
   def initialize(icon: "\u265F", position: nil, owner: nil)
     super(icon: icon, position: position, owner: owner)
 
-    @notation_letter = ''
+    @notation_letter = 'P'
   end
 
   def move_offsets
