@@ -43,8 +43,8 @@ describe Bishop do
 
   describe "#notation_letter" do
     it 'returns Q' do
-      actual = queen.notation_letter
-      expect(actual).to eq('Q')
+      actual = bishop.notation_letter
+      expect(actual).to eq('B')
     end
   end
 
