@@ -2,6 +2,7 @@
 
 require_relative '../movement/offset'
 require_relative '../movement/repeat_offset'
+require_relative '../factories/action_factory'
 
 # Implementation of ChessPiece interface that child classes
 # of specific pieces can implement or override.
@@ -9,12 +10,16 @@ class ChessPiece
   attr_accessor :position
   attr_reader :notation_letter, :owner
 
-  def initialize(icon: 'X', owner: nil, position: nil, offsets: nil, notation_letter: nil)
+  def initialize(icon: '?', owner: nil, position: nil, offsets: nil, notation_letter: nil)
     @icon = icon.freeze
     @position = position
     @offsets = offsets
     @notation_letter = notation_letter.nil? ? icon : notation_letter
     @owner = owner
+  end
+
+  def actions(game_state = nil)
+    ActionFactory.actions_for(self, game_state)
   end
 
   def move_offsets
@@ -29,11 +34,11 @@ class ChessPiece
     @icon
   end
 
-  def can_promote_at?(_position)
+  def can_promote_at?(_position = nil)
     false
   end
 
-  def can_en_passant?(_game_state)
+  def can_en_passant?(_game_state = nil)
     false
   end
 
@@ -41,7 +46,7 @@ class ChessPiece
     false
   end
 
-  def can_castle?(_game_state)
+  def can_castle?(_game_state = nil)
     false
   end
 
@@ -49,7 +54,7 @@ class ChessPiece
     false
   end
 
-  def valid_castling_partners(_game_state)
+  def valid_castling_partners(_game_state = nil)
     nil
   end
 end
