@@ -63,13 +63,69 @@ describe WhitePawn do
     include_examples 'default check behavior'
   end
 
-  # context "when #{described_class.name} has special behavior" do
-  #   context '#en_passant?' do
-  #     it 'returns true' do
-  #       expect(white_pawn).to be_en_passant?
-  #     end
-  #   end
-  # end
+  describe '#can_en_passant?' do
+    white_pawn_position = Position.new('c5')
+    friendly_owner = 'player1'
+    enemy_owner = 'player2'
+    white_pawn_at_c5 = described_class.new(position: white_pawn_position, owner: friendly_owner)
+
+    context "when enemy pawn moves two squares: b7 to b5" do
+      enemy_pawn_position = Position.new('b7')
+
+      before(:all) do
+        @game_state = GameState.new([white_pawn_at_c5])
+        @enemy_pawn = BlackPawn.new(position: enemy_pawn_position, owner: enemy_owner)
+        @game_state.add_piece(@enemy_pawn)
+        @enemy_pawn_move = Move.new(@enemy_pawn, @enemy_pawn.position, Position.new('b5'))
+        @game_state.apply_action(@enemy_pawn_move)
+
+        @bwhite_pawn_actions = white_pawn_at_c5.actions(@game_state)
+      end
+
+      it 'returns true' do
+        actual = white_pawn_at_c5.can_en_passant?(@game_state)
+        expect(actual).to be true
+      end
+    end
+
+    context "when enemy pawn moves two squares: d7 to d5" do
+      enemy_pawn_position = Position.new('d7')
+
+      before(:all) do
+        @game_state = GameState.new([white_pawn_at_c5])
+        @enemy_pawn = BlackPawn.new(position: enemy_pawn_position, owner: enemy_owner)
+        @game_state.add_piece(@enemy_pawn)
+        @enemy_pawn_move = Move.new(@enemy_pawn, @enemy_pawn.position, Position.new('d5'))
+        @game_state.apply_action(@enemy_pawn_move)
+
+        @bwhite_pawn_actions = white_pawn_at_c5.actions(@game_state)
+      end
+
+      it 'returns true' do
+        actual = white_pawn_at_c5.can_en_passant?(@game_state)
+        expect(actual).to be true
+      end
+    end
+
+    context "when generic enemy piece moves two squares: d7 to d5" do
+      enemy_piece_position = Position.new('d7')
+
+      before(:all) do
+        @game_state = GameState.new([white_pawn_at_c5])
+        @enemy_piece = ChessPiece.new(position: enemy_piece_position, owner: enemy_owner)
+        @game_state.add_piece(@enemy_piece)
+        @enemy_piece_move = Move.new(@enemy_piece, @enemy_piece.position, Position.new('d5)'))
+        @game_state.apply_action(@enemy_piece_move)
+
+        @white_pawn_actions = white_pawn_at_c5.actions(@game_state)
+      end
+
+      it 'returns false' do
+        actual = white_pawn_at_c5.can_en_passant?(@game_state)
+        expect(actual).to be false
+      end
+    end
+  end
 
   describe "#actions" do
     context 'when on a2' do
@@ -124,36 +180,6 @@ describe WhitePawn do
       end
 
       context 'when move blocked by enemy pieces' do
-        enemy_positions = ['a4']
-
-        context "when enemy at #{enemy_positions.join(', ')}" do
-          before(:all) do
-            @game_state = GameState.new([white_pawn_at_a2])
-
-            enemy_positions.each do |position|
-              @game_state.add_piece(ChessPiece.new(position: Position.new(position), owner: enemy_owner))
-            end
-
-            @white_pawn_actions = white_pawn_at_a2.actions(@game_state)
-          end
-
-          it 'has 1 possible move' do
-            actual = @white_pawn_actions.select { |action| action.is_a?(Move)}.size
-            expect(actual).to eq(1)
-          end
-
-          it 'can move to a3' do
-            expect(@white_pawn_actions).to be_available_move(Position.new('a3'))
-          end
-
-          it 'has 0 possible captures' do
-            actual = @white_pawn_actions.select { |action| action.is_a?(Capture)}.size
-            expect(actual).to eq(0)
-          end
-        end
-      end
-
-      context 'when enemies in capture range' do
         enemy_positions = ['a4']
 
         context "when enemy at #{enemy_positions.join(', ')}" do
@@ -367,6 +393,58 @@ describe WhitePawn do
         end
       end
     end
+
+    context 'when on c5' do
+      white_pawn_position = Position.new('c5')
+      friendly_owner = 'player1'
+      enemy_owner = 'player2'
+      white_pawn_at_c5 = described_class.new(position: white_pawn_position, owner: friendly_owner)
+
+      context "when enemy pawn moves two squares: b7 to b5" do
+        enemy_pawn_position = Position.new('b7')
+
+        before(:all) do
+          @game_state = GameState.new([white_pawn_at_c5])
+          @enemy_pawn = BlackPawn.new(position: enemy_pawn_position, owner: enemy_owner)
+          @game_state.add_piece(@enemy_pawn)
+          @enemy_pawn_move = Move.new(@enemy_pawn, @enemy_pawn.position, Position.new('b5'))
+          @game_state.apply_action(@enemy_pawn_move)
+
+          @white_pawn_actions = white_pawn_at_c5.actions(@game_state)
+        end
+
+        it 'has 1 en passant action' do
+          actual = @white_pawn_actions.select { |action| action.is_a?(EnPassant)}.size
+          expect(actual).to eq(1)
+        end
+
+        it 'can en passant to b6'  do
+          expect(@white_pawn_actions).to be_available_en_passant(Position.new('b6'))
+        end
+      end
+
+      context "when enemy pawn moves two squares: d7 to d5" do
+        enemy_pawn_position = Position.new('d7')
+
+        before(:all) do
+          @game_state = GameState.new([white_pawn_at_c5])
+          @enemy_pawn = BlackPawn.new(position: enemy_pawn_position, owner: enemy_owner)
+          @game_state.add_piece(@enemy_pawn)
+          @enemy_pawn_move = Move.new(@enemy_pawn, @enemy_pawn.position, Position.new('d5'))
+          @game_state.apply_action(@enemy_pawn_move)
+
+          @white_pawn_actions = white_pawn_at_c5.actions(@game_state)
+        end
+
+        it 'has 1 en passant action' do
+          actual = @white_pawn_actions.select { |action| action.is_a?(EnPassant)}.size
+          expect(actual).to eq(1)
+        end
+
+        it 'can en passant to c6'  do
+          expect(@white_pawn_actions).to be_available_en_passant(Position.new('d6'))
+        end
+      end
+    end
   end
 end
-

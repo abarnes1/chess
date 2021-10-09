@@ -9,7 +9,7 @@ class BlackPawn < ChessPiece
   def initialize(icon: "\u265F", position: nil, owner: nil)
     super(icon: icon, position: position, owner: owner)
 
-    @notation_letter = ''
+    @notation_letter = 'P'
   end
 
   def move_offsets
@@ -21,7 +21,10 @@ class BlackPawn < ChessPiece
   end
 
   def capture_offsets
-    [Offset.new([-1, -1]), Offset.new([1, -1])]
+    [
+      Offset.new([-1, -1]), 
+      Offset.new([1, -1])
+    ]
   end
 
   def can_promote_at?(position)
