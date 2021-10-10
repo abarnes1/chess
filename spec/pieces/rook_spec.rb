@@ -238,4 +238,3 @@ describe Rook do
     end
   end
 end
-
