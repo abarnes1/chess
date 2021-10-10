@@ -18,6 +18,6 @@ class Knight < ChessPiece
       Offset.new([1, 2])
     ]
 
-    @notation_letter = 'K'
+    @notation_letter = 'N'
   end
 end

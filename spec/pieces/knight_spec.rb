@@ -50,9 +50,9 @@ describe Knight do
   end
 
   describe "#notation_letter" do
-    it 'returns K' do
+    it 'returns N' do
       actual = knight.notation_letter
-      expect(actual).to eq('K')
+      expect(actual).to eq('N')
     end
   end
 
