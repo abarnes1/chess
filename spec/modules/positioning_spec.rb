@@ -267,7 +267,7 @@ describe PositioningModuleTestClass do
       end
 
       context 'when an empty sequence is included' do
-        let(:sequence_set_with_nil) { [
+        let(:sequence_set_with_empty) { [
           [Position.new('a1'), Position.new('a2'), Position.new('a3')],
           []
         ] }
@@ -279,9 +279,49 @@ describe PositioningModuleTestClass do
             [Position.new('a1'), Position.new('a2')]
           ]
   
-          actual = position_tester.trim_set_after_collision(sequence_set_with_nil, game_state)
+          actual = position_tester.trim_set_after_collision(sequence_set_with_empty, game_state)
           expect(actual).to eq(expected)
         end
+      end
+    end
+  end
+
+  describe '#distance_between_ranks' do
+    context 'when parameter is invalid' do
+      it 'returns nil when first parameter is nil' do
+        position_one = Position.new('a2')
+        position_two = nil
+
+        actual = position_tester.distance_between_ranks(position_one, position_two)
+        expect(actual).to be_nil
+      end
+
+      it 'returns nil when second parameter is nil' do
+        position_one = nil
+        position_two = Position.new('a2')
+
+        actual = position_tester.distance_between_ranks(position_one, position_two)
+        expect(actual).to be_nil
+      end
+    end
+
+    context 'when left - right' do
+      it 'returns correct positive distance' do
+        position_one = Position.new('a2')
+        position_two = Position.new('e6')
+
+        actual = position_tester.distance_between_ranks(position_one, position_two)
+        expect(actual).to eq(4)
+      end
+    end
+
+    context 'when right - left' do
+      it 'returns correct positive distance' do
+        position_one = Position.new('e6')
+        position_two = Position.new('a2')
+
+        actual = position_tester.distance_between_ranks(position_one, position_two)
+        expect(actual).to eq(4)
       end
     end
   end

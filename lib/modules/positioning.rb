@@ -70,6 +70,12 @@ module Positioning
     output
   end
 
+  def distance_between_ranks(position_one, position_two)
+    return nil if position_one.nil? || position_two.nil?
+
+    (position_one.rank.to_i - position_two.rank.to_i).abs
+  end
+
   private
 
   def calculate_rank(rank, y_offset)
