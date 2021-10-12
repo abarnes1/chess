@@ -7,6 +7,8 @@ require_relative 'pieces/rook'
 require_relative 'pieces/king'
 require_relative 'pieces/white_pawn'
 require_relative 'pieces/black_pawn'
+require_relative 'pieces/knight'
+require_relative 'pieces/queen'
 
 # Class for the state of a game of Chess that can answer
 # questions necessary to generate piece actions.  Exists to
