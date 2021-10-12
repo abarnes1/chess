@@ -2,8 +2,8 @@
 
 require_relative 'action'
 
-# A basic chess move where one piece moves from
-# its current square to another unoccupied square.
+# Castling chess action between a piece that
+# initiates castling and a partner piece.
 class Castling < Action
   attr_accessor :piece, :move_from, :move_to, :partner_piece, :partner_move_from, :partner_move_to
 
@@ -18,31 +18,22 @@ class Castling < Action
   end
 
   def self.create_for(piece, game_state)
-    return nil if game_state.nil?
+    return nil if game_state.nil? || !valid_initiator?(piece, game_state)
 
-    moves = []
+    actions = []
 
     partners = valid_partners(piece, game_state)
+
     partners.each do |partner|
       destination = initiator_destination(piece, partner)
       partner_destination = partner_destination(piece, partner)
 
       castling = new(piece, piece.position, destination, partner, partner_destination)
 
-      moves << castling unless illegal_movement?(piece, partner, game_state)
+      actions << castling unless illegal_movement?(piece, partner, game_state)
     end
 
-    moves
-  end
-
-  def self.valid_partners(initiator, game_state)
-    return [] unless valid_initiator?(initiator, game_state)
-
-    partners = []
-    partners << game_state.select_position(Position.new("a#{initiator.position.rank}"))
-    partners << game_state.select_position(Position.new("h#{initiator.position.rank}"))
-
-    partners.compact.select { |partner| valid_partner?(initiator, partner, game_state) }
+    actions
   end
 
   def self.valid_initiator?(initiator, game_state)
@@ -118,6 +109,8 @@ class Castling < Action
     end
 
     def illegal_movement?(checkable_piece, partner, game_state)
+      return true if path_blocked?(checkable_piece, partner, game_state)
+
       x_direction = left_castle?(checkable_piece, partner) ? -1 : 1
 
       offset = RepeatOffset.new([x_direction, 0], 2)
@@ -125,6 +118,25 @@ class Castling < Action
       positions_to_check += calculate_single_sequence(checkable_piece.position, offset)
 
       positions_to_check.any? { |position| game_state.attackable_by_enemy?(checkable_piece.owner, position) }
+    end
+
+    def path_blocked?(initiator, partner, game_state)
+      x_direction = left_castle?(initiator, partner) ? 1 : -1
+      x_distance = distance_between_files(partner.position, initiator.position) - 1
+      path_between_offset = RepeatOffset.new([x_direction, 0], x_distance)
+
+      positions_to_check = calculate_single_sequence(partner.position, path_between_offset)
+      positions_to_check.any? { |position| game_state.occupied_at?(position) }
+    end
+
+    def valid_partners(initiator, game_state)
+      return [] unless valid_initiator?(initiator, game_state)
+
+      partners = []
+      partners << game_state.select_position(Position.new("a#{initiator.position.rank}"))
+      partners << game_state.select_position(Position.new("h#{initiator.position.rank}"))
+
+      partners.compact.select { |partner| valid_partner?(initiator, partner, game_state) }
     end
   end
 end

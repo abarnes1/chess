@@ -31,9 +31,6 @@ describe Castling do
   end
 
   describe '#valid_initiator?' do
-    # behavioral, ensure proper boolean logic when doubles
-    # used to provide true/false for collaborators and other class methods
-    
     context 'when piece does not know if it can initiate' do
       let(:initiator) { double('initiator') }
       let(:game_state) { double('game_state') }
@@ -149,7 +146,7 @@ describe Castling do
   end
 
   describe '#valid_partner?' do
-    # behavior    
+    # behavior - return correct value depending on sub functions
     context 'when piece does not know if it can partner' do
       let(:initiator) { double('initiator') }
       let(:partner) { double('partner') }
@@ -206,9 +203,8 @@ describe Castling do
       end
     end
   end
-end
 
-# valid initiator
-# get valid partners
-# determine if valid partner
-#=> if both yes then return pair
+  context '#create_for' do
+    
+  end
+end
