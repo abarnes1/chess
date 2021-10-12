@@ -7,10 +7,6 @@ Dir['lib/actions/*.rb'].sort.each { |file| require_relative "../../#{file}" }
 class ActionFactory
   def initialize; end
 
-  def self.create_action(action_type, *args)
-    action_type.new(*args)
-  end
-
   def self.actions_for(piece, game_state)
     moves = []
 
@@ -18,7 +14,6 @@ class ActionFactory
       moves << action_type.create_for(piece, game_state)
     end
 
-    # convert array of different move type arrays to single array
     moves.flatten.compact
   end
 end
