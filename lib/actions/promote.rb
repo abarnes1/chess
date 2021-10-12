@@ -4,42 +4,44 @@
 # reaching a position on a standard chessboard.
 class Promote < Action
   attr_accessor :promote_to
-  attr_reader :move_to, :piece
+  attr_reader :move_from, :move_to, :piece
 
-  def initialize(piece, move_to, promote_to = '?')
+  def initialize(piece, move_to, promote_to = nil)
     super
     @piece = piece
-    @promote_to = promote_to
+    @promote_to = promote_to.nil? ? ChessPiece.new(owner: piece.owner, icon: '?') : promote_to
     @move_to = move_to
-
-    puts "initializing #{self}"
   end
 
   def self.create_for(piece, game_state)
     moves = []
 
+    return moves if game_state.nil?
+
     sequences = calculate_sequence_set(piece.position, piece.move_offsets)
 
-    sequences.each do |sequence|
-      sequence.each do |position|
-        break if game_state.occupied_at?(position)
+    valid_positions = trim_to_legal(sequences, game_state)
+    valid_positions.each do |position|
+      break if game_state.occupied_at?(position)
 
-        move = new(piece, position) if piece.can_promote_at?(position)
+      move = new(piece, position) if piece.can_promote_at?(position)
 
-        moves << move
-      end
+      moves << move
     end
 
     moves
   end
 
   def apply(game_state)
-    game_state.log_action(self)
-
     game_state.remove_piece(piece)
     game_state.add_piece(promote_to)
 
     promote_to.position = move_to
+  end
+
+  def undo(game_state)
+    game_state.remove_piece(promote_to)
+    game_state.add_piece(piece)
   end
 
   def to_s
@@ -48,5 +50,25 @@ class Promote < Action
 
   def notation
     "#{@move_to}#{@promote_to}"
+  end
+
+  class << self
+    private
+
+    def trim_to_legal(sequences, game_state)
+      return sequences if game_state.nil?
+
+      legal_positions = []
+
+      sequences.each do |sequence|
+        sequence.each do |position|
+          break if game_state.occupied_at?(position)
+
+          legal_positions << position
+        end
+      end
+
+      legal_positions
+    end
   end
 end

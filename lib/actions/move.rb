@@ -23,15 +23,12 @@ class Move < Action
     moves = []
 
     sequences = calculate_sequence_set(piece.position, piece.move_offsets)
-    valid_sequences = trim_set_after_collision(sequences, game_state)
-    valid_sequences.each do |sequence|
-      sequence.each do |position|
-        move = new(piece, piece.position, position) unless piece.can_promote_at?(position)
+    valid_positions = trim_to_legal(sequences, game_state)
 
-        break if !game_state.nil? && game_state.occupied_at?(position)
+    valid_positions.each do |position|
+      move = new(piece, piece.position, position) unless piece.can_promote_at?(position)
 
-        moves << move
-      end
+      moves << move
     end
 
     moves
@@ -51,5 +48,25 @@ class Move < Action
 
   def notation
     "#{@piece.notation_letter}#{@move_to}"
+  end
+
+  class << self
+    private
+
+    def trim_to_legal(sequences, game_state)
+      return sequences if game_state.nil?
+
+      legal_positions = []
+
+      sequences.each do |sequence|
+        sequence.each do |position|
+          break if game_state.occupied_at?(position)
+
+          legal_positions << position
+        end
+      end
+
+      legal_positions
+    end
   end
 end

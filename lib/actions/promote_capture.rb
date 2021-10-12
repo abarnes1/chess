@@ -12,10 +12,13 @@ class PromoteCapture < Action
     @promote_to = promote_to.nil? ? ChessPiece.new(owner: piece.owner, icon: '?') : promote_to
     @move_to = move_to
     @move_from = move_from
+    @captured = captured
   end
 
   def self.create_for(piece, game_state)
     moves = []
+
+    return moves if game_state.nil?
 
     sequences = calculate_sequence_set(piece.position, piece.capture_offsets)
 
@@ -24,8 +27,7 @@ class PromoteCapture < Action
 
       next if capturable_piece.nil?
 
-      capture_promote = new(piece, piece.position, capturable_piece.position, capturable_piece)
-      moves << capture_promote
+      moves << new(piece, piece.position, capturable_piece.position, capturable_piece)
     end
 
     moves
@@ -33,6 +35,7 @@ class PromoteCapture < Action
 
   def apply(game_state)
     game_state.remove_piece(piece)
+    game_state.remove_piece(@captured)
     game_state.add_piece(promote_to)
 
     promote_to.position = move_to
@@ -41,9 +44,14 @@ class PromoteCapture < Action
   def undo(game_state)
     game_state.remove_piece(promote_to)
     game_state.add_piece(piece)
-
-    piece.position = move_from
+    game_state.add_piece(@captured)
   end
+
+  # def undo(game_state)
+  #   piece.position = move_from
+
+  #   game_state.add_piece(@captured)
+  # end
 
   def to_s
     "promote capture: #{@piece} to #{@promote_to} at #{@move_to}"
@@ -53,16 +61,20 @@ class PromoteCapture < Action
     "#{@move_to}xe#{@promote_to}"
   end
 
-  def self.first_capturable_piece(piece, game_state, sequence)
-    sequence.each do |position|
-      break if game_state.friendly_at?(piece.owner, position)
+  class << self
+    private 
 
-      next unless game_state.enemy_at?(piece.owner, position)
+    def first_capturable_piece(piece, game_state, sequence)
+      sequence.each do |position|
+        break if game_state.friendly_at?(piece.owner, position)
 
-      capture_piece = game_state.select_position(position)
-      return capture_piece if piece.can_promote_at?(position)
+        next unless game_state.enemy_at?(piece.owner, position)
+
+        capture_piece = game_state.select_position(position)
+        return capture_piece if piece.can_promote_at?(position)
+      end
+
+      nil
     end
-
-    nil
   end
 end
