@@ -76,6 +76,12 @@ module Positioning
     (position_one.rank.to_i - position_two.rank.to_i).abs
   end
 
+  def distance_between_files(position_one, position_two)
+    return nil if position_one.nil? || position_two.nil?
+
+    (position_one.file.ord - position_two.file.ord).abs
+  end
+
   private
 
   def calculate_rank(rank, y_offset)
