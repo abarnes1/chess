@@ -253,29 +253,6 @@ describe King do
           end
         end
       end
-
-      context 'when enemies block castling' do
-        enemy_positions = ['c4', 'f4']
-
-        before(:all) do
-          @game_state = GameState.new([king_at_e1])
-
-          partner_positions.each do |position|
-            @game_state.add_piece(Rook.new(position: Position.new(position), owner: friendly_owner))
-          end
-
-          enemy_positions.each do |position|
-            @game_state.add_piece(Rook.new(position: Position.new(position), owner: enemy_owner))
-          end
-
-          @king_actions = king_at_e1.actions(@game_state)
-        end
-
-        it 'has 0 possible castling actions' do
-          actual = @king_actions.select { |action| action.is_a?(Castling)}.size
-          expect(actual).to eq(0)
-        end
-      end
     end
 
     context 'when on e8' do
@@ -310,29 +287,6 @@ describe King do
           it 'can castle to g8' do
             expect(@king_actions).to be_available_castling(Position.new('g8'))
           end
-        end
-      end
-
-      context 'when enemies block castling' do
-        enemy_positions = ['c4', 'f4']
-
-        before(:all) do
-          @game_state = GameState.new([king_at_e8])
-
-          partner_positions.each do |position|
-            @game_state.add_piece(Rook.new(position: Position.new(position), owner: friendly_owner))
-          end
-
-          enemy_positions.each do |position|
-            @game_state.add_piece(Rook.new(position: Position.new(position), owner: enemy_owner))
-          end
-
-          @king_actions = king_at_e8.actions(@game_state)
-        end
-
-        it 'has 0 possible castling actions' do
-          actual = @king_actions.select { |action| action.is_a?(Castling)}.size
-          expect(actual).to eq(0)
         end
       end
     end

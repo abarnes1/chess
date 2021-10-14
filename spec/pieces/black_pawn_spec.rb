@@ -430,7 +430,7 @@ describe BlackPawn do
           @game_state = GameState.new([black_pawn_at_b4])
           @enemy_pawn = WhitePawn.new(position: enemy_pawn_position, owner: enemy_owner)
           @game_state.add_piece(@enemy_pawn)
-          @enemy_pawn_move = Move.new(@enemy_pawn, @enemy_pawn.position, Position.new('c4)'))
+          @enemy_pawn_move = Move.new(@enemy_pawn, @enemy_pawn.position, Position.new('c4'))
           @game_state.apply_action(@enemy_pawn_move)
 
           @black_pawn_actions = black_pawn_at_b4.actions(@game_state)
