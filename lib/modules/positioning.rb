@@ -14,20 +14,20 @@ module Positioning
     new_position.inbounds? ? new_position : nil
   end
 
-  def calculate_sequence_set(position, offsets)
+  def path_group_from_offsets(position, offsets)
     return [] if offsets.nil?
 
     sequences = []
 
     offsets.each do |offset|
-      sequence = calculate_single_sequence(position, offset)
+      sequence = path_from_offset(position, offset)
       sequences << sequence unless sequence.empty?
     end
 
     sequences
   end
 
-  def calculate_single_sequence(position, offset)
+  def path_from_offset(position, offset)
     return [] if offset.nil? || position.nil?
 
     sequence = []
@@ -37,7 +37,7 @@ module Positioning
     max_repeats.times do
       current_position = next_position(current_position, offset)
 
-      break if current_position.nil?
+      break if current_position.nil? || !current_position.inbounds?
 
       sequence << current_position
     end
@@ -45,47 +45,57 @@ module Positioning
     sequence
   end
 
-  def trim_set_after_collision(sequences, game_state)
-    output = []
-
-    sequences.each do |sequence|
-      output << trim_after_collision(sequence, game_state)
-    end
-
-    output.compact.reject(&:empty?)
-  end
-
-  def trim_after_collision(sequence, game_state)
-    return nil if sequence.nil?
-    return sequence if game_state.nil?
-
-    output = []
-
-    sequence.each do |position|
-      output << position
-
-      break if game_state.occupied_at?(position)
-    end
-
-    output
-  end
-
-  def distance_between_ranks(position_one, position_two)
+  def rank_difference(position_one, position_two)
     return nil if position_one.nil? || position_two.nil?
 
-    (position_one.rank.to_i - position_two.rank.to_i).abs
+    position_two.rank.to_i - position_one.rank.to_i
   end
 
-  def distance_between_files(position_one, position_two)
+  def file_difference(position_one, position_two)
     return nil if position_one.nil? || position_two.nil?
 
-    (position_one.file.ord - position_two.file.ord).abs
+    position_two.file.ord - position_one.file.ord
+  end
+
+  def linear_path?(starting, ending)
+    return false if starting.nil? || ending.nil?
+    return false if starting == ending
+
+    sides = [file_difference(starting, ending), rank_difference(starting, ending)]
+
+    return true if sides.one?(&:zero?)
+
+    forms_isosceles_triangle?(sides)
+  end
+
+  def linear_path_from_positions(starting, ending)
+    return nil unless linear_path?(starting, ending)
+
+    next_position = starting
+    path = [starting]
+
+    until next_position == ending
+      next_file = next_file(next_position.file, ending.file)
+      next_rank = next_rank(next_position.rank, ending.rank)
+      next_position = Position.new(next_file + next_rank)
+      path << next_position
+    end
+
+    path
   end
 
   private
 
   def calculate_rank(rank, y_offset)
     (rank.to_i + y_offset).to_s
+  end
+
+  def forms_isosceles_triangle?(sides)
+    return true if sides.uniq.size == 1 || sides.all? { |side| side.abs == 1}
+
+    hypotenuse = Math.sqrt(sides.map! { |side| side**2 }.sum)
+
+    (hypotenuse % 1).zero?
   end
 
   def calculate_file(file, x_offset)
@@ -95,5 +105,27 @@ module Positioning
     return 255.chr unless new_file.between?(0, 255)
 
     new_file.chr
+  end
+
+  def next_rank(current, ending)
+    case current.to_i <=> ending.to_i
+    when -1
+      (current.to_i + 1).to_s
+    when 0
+      current
+    when 1
+      (current.to_i - 1).to_s
+    end
+  end
+
+  def next_file(current, ending)
+    case current.ord <=> ending.ord
+    when -1
+      (current.ord + 1).chr
+    when 0
+      current
+    when 1
+      (current.ord - 1).chr
+    end
   end
 end

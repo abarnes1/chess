@@ -94,14 +94,14 @@ class Castling < Action
       x_direction = left_castle?(initiator, partner) ? -2 : 2
       offset = Offset.new([x_direction, 0])
 
-      calculate_single_sequence(initiator.position, offset)[0]
+      path_from_offset(initiator.position, offset)[0]
     end
 
     def partner_destination(initiator, partner)
       x_direction = left_castle?(initiator, partner) ? 3 : -2
 
       offset = Offset.new([x_direction, 0])
-      calculate_single_sequence(partner.position, offset)[0]
+      path_from_offset(partner.position, offset)[0]
     end
 
     def left_castle?(piece, partner)
@@ -111,21 +111,16 @@ class Castling < Action
     def illegal_movement?(checkable_piece, partner, game_state)
       return true if path_blocked?(checkable_piece, partner, game_state)
 
-      x_direction = left_castle?(checkable_piece, partner) ? -1 : 1
-
-      offset = RepeatOffset.new([x_direction, 0], 2)
-      positions_to_check = [checkable_piece.position]
-      positions_to_check += calculate_single_sequence(checkable_piece.position, offset)
-
-      positions_to_check.any? { |position| game_state.attackable_by_enemy?(checkable_piece.owner, position) }
+      false
     end
 
     def path_blocked?(initiator, partner, game_state)
       x_direction = left_castle?(initiator, partner) ? 1 : -1
-      x_distance = distance_between_files(partner.position, initiator.position) - 1
+      x_distance = file_difference(partner.position, initiator.position).abs - 1
+
       path_between_offset = RepeatOffset.new([x_direction, 0], x_distance)
 
-      positions_to_check = calculate_single_sequence(partner.position, path_between_offset)
+      positions_to_check = path_from_offset(partner.position, path_between_offset)
       positions_to_check.any? { |position| game_state.occupied_at?(position) }
     end
 

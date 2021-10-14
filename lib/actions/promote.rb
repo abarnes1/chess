@@ -18,7 +18,7 @@ class Promote < Action
 
     return moves if game_state.nil?
 
-    sequences = calculate_sequence_set(piece.position, piece.move_offsets)
+    sequences = path_group_from_offsets(piece.position, piece.move_offsets)
 
     valid_positions = trim_to_legal(sequences, game_state)
     valid_positions.each do |position|

@@ -18,7 +18,7 @@ class Capture < Action
 
     return moves if game_state.nil?
 
-    sequences = calculate_sequence_set(piece.position, piece.capture_offsets)
+    sequences = path_group_from_offsets(piece.position, piece.capture_offsets)
 
     sequences.each do |sequence|
       capturable_piece = first_capturable_piece(piece, game_state, sequence)
@@ -69,5 +69,4 @@ class Capture < Action
       nil
     end
   end
-
 end

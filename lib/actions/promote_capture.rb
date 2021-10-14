@@ -20,7 +20,7 @@ class PromoteCapture < Action
 
     return moves if game_state.nil?
 
-    sequences = calculate_sequence_set(piece.position, piece.capture_offsets)
+    sequences = path_group_from_offsets(piece.position, piece.capture_offsets)
 
     sequences.each do |sequence|
       capturable_piece = first_capturable_piece(piece, game_state, sequence)
@@ -47,12 +47,6 @@ class PromoteCapture < Action
     game_state.add_piece(@captured)
   end
 
-  # def undo(game_state)
-  #   piece.position = move_from
-
-  #   game_state.add_piece(@captured)
-  # end
-
   def to_s
     "promote capture: #{@piece} to #{@promote_to} at #{@move_to}"
   end
@@ -62,7 +56,7 @@ class PromoteCapture < Action
   end
 
   class << self
-    private 
+    private
 
     def first_capturable_piece(piece, game_state, sequence)
       sequence.each do |position|
