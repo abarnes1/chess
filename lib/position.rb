@@ -6,7 +6,7 @@ class Position
 
   def initialize(position)
     @file = position[0].downcase # alpha column
-    @rank = position[1] # numerical row
+    @rank = position[1..-1] # numerical row
   end
 
   def position
