@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require_relative 'factories/action_factory'
+require_relative 'modules/positioning'
+require_relative 'threat_map'
 
 require_relative 'pieces/bishop'
 require_relative 'pieces/rook'
@@ -15,11 +17,14 @@ require_relative 'pieces/queen'
 # simplify questions about aspects of the game state for action
 # creation without adding a bunch of methods to the Action class(es).
 class GameState
+  include Positioning
+
   attr_reader :pieces, :action_log
 
   def initialize(pieces = [], action_log = [])
     @pieces = pieces
     @action_log = action_log
+    @threat_map = nil
   end
 
   def add_piece(piece)
@@ -69,7 +74,6 @@ class GameState
   end
 
   # good above here
-
   def checkable_pieces(owner)
     pieces = friendly_pieces(owner)
 
@@ -97,16 +101,12 @@ class GameState
     action_log.any? { |action| action.piece == piece }
   end
 
-  # can single square be attacked by any of the enemy pieces
   def attackable_by_enemy?(friendly_owner, position)
     enemy_pieces = enemy_pieces(friendly_owner)
 
-    enemy_pieces.each do |piece|
-      actions = ActionFactory.actions_for(piece, self)
-      actions.any? { |action| return true if action.move_to == position }
-    end
+    @threat_map = calc_threat_map(enemy_pieces)
 
-    false
+    @threat_map.include?(position)
   end
 
   def in_check?(owner)
@@ -128,5 +128,12 @@ class GameState
     return false if in_check?(owner)
 
     true
+  end
+
+  private
+
+  def calc_threat_map(pieces_to_map)
+    @threat_map = ThreatMap.new(pieces)
+    @threat_map.calculate(pieces_to_map)
   end
 end

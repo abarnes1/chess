@@ -70,6 +70,13 @@ class Chessboard
     end
   end
 
+  def highlight_threat_map(threat_map)
+    threat_map.each do |position|
+      square = select(position)
+      square.bg_highlight = Colors::BG_BRIGHT_BROWN
+    end
+  end
+
   def reset_squares
     squares.each do |square|
       square.clear_piece
