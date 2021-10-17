@@ -1,36 +1,23 @@
 # frozen_string_literal: true
 
 require_relative 'chess_square'
-require_relative 'constants/colors'
+require_relative '../constants/colors'
+require_relative 'color_scheme'
 
 # Visual representation of a classic chessboard.
 class Chessboard
+  include ColorScheme
+
   attr_reader :primary_background_color, :secondary_background_color
 
   def initialize
     @squares = nil
-    @primary_background_color = Colors::BG_BLACK
-    @secondary_background_color = Colors::BG_BRIGHT_GRAY
   end
 
   def squares
     initialize_squares if @squares.nil?
 
     @squares
-  end
-
-  def primary_background_color=(color)
-    return if color == @secondary_background_color
-
-    update_square_default_background(@primary_background_color, color)
-    @primary_background_color = color
-  end
-
-  def secondary_background_color=(color)
-    return if color == @primary_background_color
-
-    update_square_default_background(@secondary_background_color, color)
-    @secondary_background_color = color
   end
 
   def display
@@ -113,28 +100,11 @@ class Chessboard
 
   def default_background_color(position)
     position_value = (position.file.ord + position.rank.to_i) % 2
-    position_value.zero? ? @primary_background_color : @secondary_background_color
+    position_value.zero? ? default_primary_background_color : default_secondary_background_color
   end
 
   def update_square_default_background(old_color, new_color)
     to_update = squares.select { |square| square.bg_color == old_color }
     to_update.each { |square| square.bg_color = new_color }
-  end
-
-  def action_background_color(action)
-    case action
-    when Move
-      Colors::BG_CYAN
-    when Capture
-      Colors::BG_RED
-    when Promote
-      Colors::BG_BRIGHT_GREEN
-    when PromoteCapture
-      Colors::BG_MAGENTA
-    when EnPassant
-      Colors::BG_RED
-    when Castling
-      Colors::BG_GREEN
-    end
   end
 end
