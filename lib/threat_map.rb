@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'modules/positioning'
 require_relative 'game_state'
 

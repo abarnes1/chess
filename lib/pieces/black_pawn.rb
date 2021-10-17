@@ -22,7 +22,7 @@ class BlackPawn < ChessPiece
 
   def capture_offsets
     [
-      Offset.new([-1, -1]), 
+      Offset.new([-1, -1]),
       Offset.new([1, -1])
     ]
   end

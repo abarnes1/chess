@@ -91,7 +91,7 @@ module Positioning
   end
 
   def forms_isosceles_triangle?(sides)
-    return true if sides.uniq.size == 1 || sides.all? { |side| side.abs == 1}
+    return true if sides.uniq.size == 1 || sides.all? { |side| side.abs == 1 }
 
     hypotenuse = Math.sqrt(sides.map! { |side| side**2 }.sum)
 

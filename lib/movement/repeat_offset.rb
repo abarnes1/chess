@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'offset'
 
 # Represents a [x, y] coordinate move that can be repeated
