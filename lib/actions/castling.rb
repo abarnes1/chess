@@ -112,8 +112,6 @@ class Castling < Action
       return true if path_blocked?(checkable_piece, partner, game_state)
       return true if path_attackable?(checkable_piece, partner, game_state)
 
-      # return true if attackable_by_enemy_threat_map?(checkable_piece.owner, )
-
       false
     end
 
