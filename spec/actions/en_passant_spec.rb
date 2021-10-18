@@ -1,4 +1,5 @@
-require_relative '../../lib/actions/en_passant.rb'
+require_relative '../../lib/actions/en_passant'
+require_relative '../../lib/game_state'
 require_relative '../../lib/pieces/black_pawn'
 require_relative '../../lib/pieces/white_pawn'
 
@@ -207,15 +208,102 @@ describe EnPassant do
 
     context 'when last action was not a Move' do
       it 'returns false for a2 to a4' do
-        action = double('action') do
+        action = double('action')
         allow(action).to receive(:is_a?).with(Move).and_return(false)
         expect(en_passant.two_space_move?(action)).to be false
-        end
       end
     end
   end
 
-  context '#create_for' do
-    
+  describe '#apply' do
+    let(:move_from) { Position.new('b2') }
+    let(:move_to) { Position.new('c3') }
+    let(:capturing) { double('capturing') }
+    let(:captured) { double('captured') }
+    let(:game_state) { double('game_state') }
+
+    subject(:apply_en_passant) { described_class.new(capturing, move_from, move_to, captured)}
+
+    before do
+      allow(capturing).to receive(:position)
+      allow(capturing).to receive(:position=)
+      allow(game_state).to receive(:remove_piece)
+
+      capturing.position = move_from
+    end
+
+    it 'moves the capturing piece to new position' do
+      expect(capturing).to receive(:position=).with(move_to)
+      
+      apply_en_passant.apply(game_state)
+    end
+
+    it 'removes the captured piece' do
+      expect(game_state).to receive(:remove_piece).with(captured)
+
+      apply_en_passant.apply(game_state)
+    end
+  end
+
+  describe '#undo' do
+    let(:move_from) { Position.new('b2') }
+    let(:move_to) { Position.new('c3') }
+    let(:capturing) { double('capturing') }
+    let(:captured) { double('captured') }
+    let(:game_state) { double('game_state') }
+
+    subject(:undo_en_passant) { described_class.new(capturing, move_from, move_to, captured)}
+
+    before do
+      allow(capturing).to receive(:position)
+      allow(capturing).to receive(:position=)
+      allow(game_state).to receive(:add_piece)
+
+      capturing.position = move_from
+    end
+
+    it 'returns the capturing piece to original position' do
+      expect(capturing).to receive(:position=).with(move_from)
+      
+      undo_en_passant.undo(game_state)
+    end
+
+    it 'adds the captured piece' do
+      expect(game_state).to receive(:add_piece).with(captured)
+
+      undo_en_passant.undo(game_state)
+    end
+  end
+
+  describe '#to_s' do
+    let(:move_from) { Position.new('b2') }
+    let(:move_to) { Position.new('c3') }
+    let(:capturing) { double('capturing', to_s: 'x') }
+    let(:captured) { double('captured', to_s: 'y', position: Position.new('c2')) }
+
+    subject(:en_passant) { described_class.new(capturing, move_from, move_to, captured)}
+
+    it 'returns the correct string' do
+      expected = "en passant capture: #{capturing} from #{move_from} to #{move_to} and capture #{captured} at #{captured.position}"
+
+      actual = en_passant.to_s
+      expect(actual).to eq(expected)
+    end
+  end
+
+  describe '#notation' do
+    let(:move_from) { Position.new('b2') }
+    let(:move_to) { Position.new('c3') }
+    let(:capturing) { double('capturing', to_s: 'x', position: move_from) }
+    let(:captured) { double('captured', to_s: 'y', position: Position.new('c2')) }
+
+    subject(:en_passant) { described_class.new(capturing, move_from, move_to, captured)}
+
+    it 'returns the correct string' do
+      expected = "#{capturing.position.file}x#{move_to} e.p."
+
+      actual = en_passant.notation
+      expect(actual).to eq(expected)
+    end
   end
 end
