@@ -97,7 +97,7 @@ class EnPassant < Action
   end
 
   def notation
-    "#{@piece.notation_letter}x#{@move_to}"
+    "#{@piece.position.file}x#{@move_to} e.p."
   end
 
   class << self
