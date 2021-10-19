@@ -33,7 +33,6 @@ class Capture < Action
   end
 
   def apply(game_state)
-    @captured = game_state.select_position(move_to)
     piece.position = move_to
 
     game_state.remove_piece(@captured)
