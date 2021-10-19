@@ -1,5 +1,5 @@
 require_relative '../../lib/actions/en_passant'
-require_relative '../../lib/game_state'
+require_relative '../../lib/pieces/chesspiece'
 require_relative '../../lib/pieces/black_pawn'
 require_relative '../../lib/pieces/white_pawn'
 
@@ -218,28 +218,27 @@ describe EnPassant do
   describe '#apply' do
     let(:move_from) { Position.new('b2') }
     let(:move_to) { Position.new('c3') }
-    let(:capturing) { double('capturing') }
-    let(:captured) { double('captured') }
+    let(:capturing) { ChessPiece.new }
+    let(:captured) { ChessPiece.new }
     let(:game_state) { double('game_state') }
 
     subject(:apply_en_passant) { described_class.new(capturing, move_from, move_to, captured)}
 
     before do
-      allow(capturing).to receive(:position)
-      allow(capturing).to receive(:position=)
       allow(game_state).to receive(:remove_piece)
 
       capturing.position = move_from
+      captured.position = move_to
     end
 
     it 'moves the capturing piece to new position' do
-      expect(capturing).to receive(:position=).with(move_to)
-      
-      apply_en_passant.apply(game_state)
+      expect {
+        apply_en_passant.apply(game_state)
+      }.to change { capturing.position }.from(move_from).to(move_to)
     end
 
     it 'removes the captured piece' do
-      expect(game_state).to receive(:remove_piece).with(captured)
+      expect(game_state).to receive(:remove_piece).with(captured).once
 
       apply_en_passant.apply(game_state)
     end
@@ -248,24 +247,26 @@ describe EnPassant do
   describe '#undo' do
     let(:move_from) { Position.new('b2') }
     let(:move_to) { Position.new('c3') }
-    let(:capturing) { double('capturing') }
-    let(:captured) { double('captured') }
+    let(:capturing) { ChessPiece.new }
+    let(:captured) { ChessPiece.new }
     let(:game_state) { double('game_state') }
 
     subject(:undo_en_passant) { described_class.new(capturing, move_from, move_to, captured)}
 
     before do
-      allow(capturing).to receive(:position)
-      allow(capturing).to receive(:position=)
       allow(game_state).to receive(:add_piece)
+      allow(game_state).to receive(:remove_piece)
 
       capturing.position = move_from
+      captured.position = move_to
+
+      undo_en_passant.apply(game_state)
     end
 
     it 'returns the capturing piece to original position' do
-      expect(capturing).to receive(:position=).with(move_from)
-      
-      undo_en_passant.undo(game_state)
+      expect {
+        undo_en_passant.undo(game_state)
+      }.to change { capturing.position }.from(move_to).to(move_from)
     end
 
     it 'adds the captured piece' do
