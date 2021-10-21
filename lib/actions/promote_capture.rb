@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'action'
+
 # A basic chess move where one piece moves from its current
 # square to another square occupied by an enemy piece.
 class PromoteCapture < Action
@@ -52,7 +54,7 @@ class PromoteCapture < Action
   end
 
   def notation
-    "#{@move_to}xe#{@promote_to}"
+    "#{move_from}x#{move_to}=#{@promote_to}"
   end
 
   class << self
