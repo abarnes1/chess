@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'action'
+
 # Chess action where a piece can be exchanged for another when
 # reaching a position on a standard chessboard.
 class Promote < Action
@@ -49,7 +51,7 @@ class Promote < Action
   end
 
   def notation
-    "#{@move_to}#{@promote_to}"
+    "#{move_to}#{promote_to}"
   end
 
   class << self
