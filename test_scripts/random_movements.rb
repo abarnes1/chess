@@ -1,6 +1,6 @@
 require_relative '../lib/modules/positioning'
 require_relative '../lib/game_state'
-require_relative '../lib/chessboard'
+require_relative '../lib/display/chessboard'
 
 game_state = GameState.new
 player1 = { color: Colors::CYAN, description: 'cyan' }
