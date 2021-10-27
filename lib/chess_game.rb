@@ -75,8 +75,14 @@ class ChessGame
   end
 
   def play_next_turn(player)
-    # input = player_input(player)
-    # @last_move_identifier = @gameboard.drop(input, player.token)
+    # get legal moves
+    # legal_moves = @game_state.valid_moves(@current_player)
+
+    # if game is forced draw then end (75 moves, 5 fold repitition)
+    # if player is checkmated or stalemated then end
+    # if player can request a draw, notify (50 moves, 3 fold repitition)
+
+    # otherwise, get valid player input and apply the selected move
   end
 
   def player_input(player)
