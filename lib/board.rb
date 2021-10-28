@@ -79,11 +79,11 @@ class Board
     end
   end
 
-  def to_fen(white_owner)
+  def to_fen
     output = []
     ('1'..'8').to_a.each do |rank|
       current_rank = select_rank(rank)
-      output << encode_rank_to_fen(white_owner, current_rank)
+      output << encode_rank_to_fen(@white_player, current_rank)
     end
 
     output.reverse.join('/')
