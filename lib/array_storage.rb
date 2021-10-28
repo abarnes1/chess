@@ -10,13 +10,13 @@ require_relative 'pieces/black_pawn'
 
 # Internal storage of pieces on a chessboard that allows for placement,
 # removal, and retrieval of pieces.
-class Board
+class ArrayStorage
   def initialize(pieces: nil, white: 'white', black: 'black')
     @positions = Array.new(64)
     @white_player = white
     @black_player = black
 
-    pieces&.each { |piece| add_piece(piece) }
+    pieces&.each { |piece| add_piece(piece) } unless pieces.empty?
   end
 
   def add_piece(piece)
@@ -31,12 +31,12 @@ class Board
     @positions[index] = nil
   end
 
-  def player_pieces(owner)
-    @positions.each_with_object([]) do |piece, pieces|
-      pieces << piece unless piece.nil? || owner != piece.owner
+  def white_pieces
+    player_pieces(@white)
+  end
 
-      pieces
-    end
+  def black_pieces
+    player_pieces(@black)
   end
 
   def select_position(position)
@@ -49,18 +49,6 @@ class Board
     index = position_to_index(piece.position)
 
     @positions[index]
-  end
-
-  def occupied_at?(position)
-    !select_position(position).nil?
-  end
-
-  def enemy_at?(friendly_owner, position)
-    piece = select_position(position)
-
-    return false if piece.nil?
-
-    piece != friendly_owner
   end
 
   def apply(action)
@@ -102,6 +90,14 @@ class Board
   end
 
   private
+
+  def player_pieces(owner)
+    @positions.each_with_object([]) do |piece, pieces|
+      pieces << piece unless piece.nil? || owner != piece.owner
+
+      pieces
+    end
+  end
 
   def position_to_index(position)
     # 'a8' => 0, 'h1' => 63 (index is top to bottom, left to right)
