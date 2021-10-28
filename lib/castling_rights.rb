@@ -2,6 +2,8 @@ require_relative 'castling_pair'
 require_relative 'position'
 
 class CastlingRights
+  attr_reader :white_
+
   def initialize(white: 'white', black: 'black')
     @white = white
     @black = black
@@ -36,5 +38,17 @@ class CastlingRights
     output += 'q' if @black_queen_side.enabled?
 
     output.empty? ? '-' : output
+  end
+
+  def self.from_fen(white: 'white', black: 'black', fen: '-')
+    rights = CastlingRights.new
+
+    rights.update(Position.new('h1')) unless fen.include?('K')
+    rights.update(Position.new('a1')) unless fen.include?('Q')
+    
+    rights.update(Position.new('h8')) unless fen.include?('k')
+    rights.update(Position.new('a8')) unless fen.include?('q')
+
+    rights
   end
 end
