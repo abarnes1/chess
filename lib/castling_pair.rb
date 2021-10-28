@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
+# King and rook pair used to track when castling is available.
 class CastlingPair
-  attr_reader :king_position
+  attr_reader :king_position, :rook_position
 
   def initialize(king_position, rook_position)
     @king_position = king_position

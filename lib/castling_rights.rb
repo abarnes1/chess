@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 require_relative 'castling_pair'
 require_relative 'position'
 
+# Castling rights for both white and black players in a game of chess.
 class CastlingRights
-  attr_reader :white_
-
   def initialize(white: 'white', black: 'black')
     @white = white
     @black = black
@@ -30,7 +31,7 @@ class CastlingRights
   end
 
   def to_fen
-    output = ""
+    output = ''
 
     output += 'K' if @white_king_side.enabled?
     output += 'Q' if @white_queen_side.enabled?
@@ -41,11 +42,10 @@ class CastlingRights
   end
 
   def self.from_fen(white: 'white', black: 'black', fen: '-')
-    rights = CastlingRights.new
+    rights = CastlingRights.new(white: white, black: black)
 
     rights.update(Position.new('h1')) unless fen.include?('K')
     rights.update(Position.new('a1')) unless fen.include?('Q')
-    
     rights.update(Position.new('h8')) unless fen.include?('k')
     rights.update(Position.new('a8')) unless fen.include?('q')
 
