@@ -4,6 +4,8 @@ require_relative 'factories/action_factory'
 require_relative 'modules/positioning'
 require_relative 'threat_map'
 require_relative 'piece_storage'
+require_relative 'castling_rights'
+require_relative 'en_passant_target'
 
 require_relative 'pieces/bishop'
 require_relative 'pieces/rook'
@@ -20,13 +22,16 @@ require_relative 'pieces/queen'
 class GameStateV2
   include Positioning
 
-  attr_reader :pieces
-
   def initialize(pieces: [], white: 'white', black: 'black')
     @white_player = white
     @black_player = black
     @pieces = PieceStorage.new(pieces: pieces, white: white, black: black)
     @castling_rights = CastlingRights.new(white: white, black: black)
+    @en_passant_target = EnPassantTarget.new
+  end
+
+  def pieces
+    @pieces.pieces
   end
 
   def friendly_pieces(owner)
@@ -66,10 +71,14 @@ class GameStateV2
     @castling_rights.player_pairs(player)
   end
 
-  def checkable_pieces(owner)
+  def en_passant_target
+    @en_passant_target.target
+  end
+
+  def player_king(owner)
     pieces = friendly_pieces(owner)
 
-    pieces.select(&:can_be_checked?)
+    pieces.first { |piece| piece.instance_of?(King)}
   end
 
   def attackable_by_enemy?(friendly_owner, position)
@@ -82,8 +91,8 @@ class GameStateV2
   end
 
   def in_check?(owner)
-    checkable_pieces = checkable_pieces(owner)
-    checkable_pieces.any? { |piece| attackable_by_enemy?(piece.owner, piece.position) }
+    king = player_king(owner)
+    attackable_by_enemy?(king.owner, king.position)
   end
 
   def apply_action(action)
@@ -119,7 +128,7 @@ class GameStateV2
   end
 
   def calc_threat_map(pieces_to_map)
-    @threat_map = ThreatMap.new(pieces)
-    @threat_map.calculate(pieces_to_map)
+    threat_map = ThreatMap.new(pieces)
+    threat_map.calculate(pieces_to_map)
   end
 end
