@@ -22,16 +22,27 @@ require_relative 'pieces/queen'
 class GameStateV2
   include Positioning
 
+  attr_reader :action_log
+
   def initialize(pieces: [], white: 'white', black: 'black')
     @white_player = white
     @black_player = black
     @pieces = PieceStorage.new(pieces: pieces, white: white, black: black)
     @castling_rights = CastlingRights.new(white: white, black: black)
     @en_passant_target = EnPassantTarget.new
+    @action_log = []
   end
 
   def pieces
     @pieces.pieces
+  end
+
+  def add_piece(piece)
+    @pieces.add_piece(piece)
+  end
+
+  def remove_piece(piece)
+    @pieces.remove_piece(piece)
   end
 
   def friendly_pieces(owner)
@@ -97,11 +108,13 @@ class GameStateV2
 
   def apply_action(action)
     action.apply(self)
-    action_log << action
+    @castling_rights.update(action.move_from)
+    @en_passant_target.update(action)
+    @action_log << action
   end
 
   def undo_last_action
-    action = action_log.pop
+    action = @action_log.pop
     action.undo(self)
   end
 
@@ -109,6 +122,19 @@ class GameStateV2
     return false if in_check?(owner)
 
     true
+  end
+
+  def last_moves(count)
+    return [] if action_log.empty?
+
+    action_log.reverse[0..count]
+  end
+
+  def last_moves_notation(count)
+    return [] if action_log.empty?
+
+    to_display = action_log.reverse[0..count]
+    to_display.reverse.join("\n")
   end
 
   private

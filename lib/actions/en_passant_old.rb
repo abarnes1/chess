@@ -4,7 +4,7 @@ require_relative 'action'
 
 # A chess move that allows pawns to capture other pawns that
 # move past their capturable positions on the previous turn.
-class EnPassant < Action
+class EnPassantOld #< Action
   attr_reader :piece, :move_to, :move_from, :captured
 
   def initialize(piece, move_from, move_to, captured)
@@ -16,17 +16,16 @@ class EnPassant < Action
   end
 
   def self.create_for(piece, game_state)
-    return nil if game_state.nil? || !valid_initiator?(piece)
+    return nil if game_state.nil? || game_state.move_enables_en_passant?
 
-    target = game_state.en_passant_target
+    last_move = game_state.last_moves(1)[0]
 
-    return nil if target.nil?
-    # return nil unless move_enables_en_passant?(piece, last_move)
+    return nil unless move_enables_en_passant?(piece, last_move)
 
-    # capture_position = identify_capture_position(piece, last_move)
-    # target = game_state.select_position(last_move.move_to)
+    capture_position = identify_capture_position(piece, last_move)
+    target = game_state.select_position(last_move.move_to)
 
-    # new(piece, piece.position, capture_position, target)
+    new(piece, piece.position, capture_position, target)
   end
 
   def self.valid_initiator?(initiator)

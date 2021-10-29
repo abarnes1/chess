@@ -23,11 +23,16 @@ class Castling < Action
     actions = []
 
     active_pairs = game_state.castling_rights(king.owner)
+    # p active_pairs
 
     active_pairs.each do |pair|
+      # puts "pair: #{pair.king_position} - #{pair.rook_position}"
       next unless valid_pair?(pair, game_state)
 
+      # puts "#{pair.king_position} - #{pair.rook_position}"
       rook = game_state.select_position(pair.rook_position)
+
+      # puts "#{king} at #{king.position}, #{rook} at #{rook.position}"
 
       king_destination = king_destination(king, rook)
       rook_destination = rook_destination(king, rook)
@@ -70,11 +75,13 @@ class Castling < Action
       return false if king.nil? || !king.instance_of?(King)
       return false if rook.nil? || !rook.instance_of?(Rook)
       return false if king.owner != rook.owner
-
+      
+      puts "valid pair: #{king} at #{king.position}, #{rook} at #{rook.position}"
       true
     end
 
     def king_destination(king, rook)
+      puts "#{king} at #{king.position}, #{rook} at #{rook.position}"
       x_direction = left_castle?(king, rook) ? -2 : 2
       offset = Offset.new([x_direction, 0])
 
@@ -100,8 +107,8 @@ class Castling < Action
     end
 
     def path_blocked?(king, rook, game_state)
+      # puts "#{king} at #{king.position}, #{rook} at #{rook.position}"
       path = linear_path_from_positions(king.position, rook.position)
-
       positions_to_check = path[1...-1]
       positions_to_check.any? { |position| game_state.occupied_at?(position) }
     end
