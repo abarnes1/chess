@@ -31,6 +31,10 @@ class PieceStorage
     @positions[index] = nil
   end
 
+  def pieces
+    @positions.reject(&:nil?)
+  end
+
   def white_pieces
     player_pieces(@white)
   end
