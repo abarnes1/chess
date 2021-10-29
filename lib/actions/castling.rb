@@ -18,7 +18,7 @@ class Castling < Action
   end
 
   def self.create_for(king, game_state)
-    return nil if game_state.nil?
+    return nil if game_state.nil? || !king.instance_of?(King)
 
     actions = []
 
