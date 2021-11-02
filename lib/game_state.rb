@@ -3,6 +3,9 @@
 require_relative 'factories/action_factory'
 require_relative 'modules/positioning'
 require_relative 'threat_map'
+require_relative 'board_data'
+require_relative 'castling_rights'
+require_relative 'en_passant_target'
 
 require_relative 'pieces/bishop'
 require_relative 'pieces/rook'
@@ -19,26 +22,48 @@ require_relative 'pieces/queen'
 class GameState
   include Positioning
 
-  attr_reader :pieces, :action_log
+  attr_reader :action_log
 
-  def initialize(pieces = [], action_log = [])
-    @pieces = pieces
-    @action_log = action_log
-    @threat_map = nil
+  def initialize(pieces: [], white: 'white', black: 'black')
+    @white_player = white
+    @black_player = black
+    @active_player = @white_player
+
+    @pieces = BoardData.new(pieces: pieces, white: white, black: black)
+    @castling_rights = CastlingRights.new(white: white, black: black)
+    @en_passant_target = EnPassantTarget.new
+
+    # @half_move_clock
+    # @full_move_clock
+    @action_log = []
+  end
+
+  def pieces
+    @pieces.pieces
   end
 
   def add_piece(piece)
-    pieces << piece
+    @pieces.add_piece(piece)
   end
 
   def remove_piece(piece)
-    pieces.delete(piece)
+    @pieces.remove_piece(piece)
+  end
+
+  def friendly_pieces(owner)
+    pieces.select { |piece| piece.owner == owner }
+  end
+
+  def select_position(position)
+    @pieces.select_position(position)
+  end
+
+  def select_piece(piece)
+    @pieces.select_piece(piece)
   end
 
   def occupied_at?(position)
-    piece = select_position(position)
-
-    piece.nil? ? false : true
+    !select_position(position).nil?
   end
 
   def friendly_at?(friendly_owner, position)
@@ -57,31 +82,51 @@ class GameState
     piece.owner != friendly_owner
   end
 
-  def friendly_pieces(owner)
-    pieces.select { |piece| piece.owner == owner }
-  end
-
-  def enemy_pieces(owner)
-    pieces.reject { |piece| piece.owner == owner }
-  end
-
-  def select_position(position)
-    pieces.find { |piece| piece.position == position }
-  end
-
-  def select_piece(piece)
-    pieces.find { |searched_piece| searched_piece == piece }
-  end
-
   # good above here
-  def checkable_pieces(owner)
+  def castling_rights(player)
+    @castling_rights.player_pairs(player)
+  end
+
+  def en_passant_target
+    @en_passant_target.target
+  end
+
+  def player_king(owner)
     pieces = friendly_pieces(owner)
 
-    pieces.select(&:can_be_checked?)
+    pieces.first { |piece| piece.instance_of?(King)}
   end
 
-  def log_action(action)
+  def attackable_by_enemy?(friendly_owner, position)
+    enemy = opposing_player(friendly_owner)
+    enemy_pieces = enemy_pieces(enemy)
+
+    threat_map = calc_threat_map(enemy_pieces)
+
+    threat_map.include?(position)
+  end
+
+  def in_check?(owner)
+    king = player_king(owner)
+    attackable_by_enemy?(king.owner, king.position)
+  end
+
+  def apply_action(action)
+    action.apply(self)
+    @castling_rights.update(action.move_from)
+    @en_passant_target.update(action)
     @action_log << action
+  end
+
+  def undo_last_action
+    action = @action_log.pop
+    action.undo(self)
+  end
+
+  def legal_state?(owner)
+    return false if in_check?(owner)
+
+    true
   end
 
   def last_moves(count)
@@ -97,43 +142,24 @@ class GameState
     to_display.reverse.join("\n")
   end
 
-  def moved?(piece)
-    action_log.any? { |action| action.piece == piece }
-  end
-
-  def attackable_by_enemy?(friendly_owner, position)
-    enemy_pieces = enemy_pieces(friendly_owner)
-
-    @threat_map = calc_threat_map(enemy_pieces)
-
-    @threat_map.include?(position)
-  end
-
-  def in_check?(owner)
-    checkable_pieces = checkable_pieces(owner)
-    checkable_pieces.any? { |piece| attackable_by_enemy?(piece.owner, piece.position) }
-  end
-
-  def apply_action(action)
-    action.apply(self)
-    action_log << action
-  end
-
-  def undo_last_action
-    action = action_log.pop
-    action.undo(self)
-  end
-
-  def legal_state?(owner)
-    return false if in_check?(owner)
-
-    true
-  end
-
   private
 
+  def enemy_pieces(owner)
+    if owner == @white
+      @pieces.white_pieces
+    elsif owner == @black
+      @pieces.black_pieces
+    else
+      []
+    end
+  end
+
+  def opposing_player(player)
+    player == @white ? @black : @white
+  end
+
   def calc_threat_map(pieces_to_map)
-    @threat_map = ThreatMap.new(pieces)
-    @threat_map.calculate(pieces_to_map)
+    threat_map = ThreatMap.new(pieces)
+    threat_map.calculate(pieces_to_map)
   end
 end
