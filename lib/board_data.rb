@@ -10,7 +10,7 @@ require_relative 'pieces/black_pawn'
 
 # Internal storage of pieces on a chessboard that allows for placement,
 # removal, and retrieval of pieces.
-class PieceStorage
+class BoardData
   def initialize(pieces: nil, white: 'white', black: 'black')
     @positions = Array.new(64)
     @white_player = white
