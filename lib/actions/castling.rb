@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative 'action'
-require 'pry-byebug'
 
 # Castling chess action between a piece that
 # initiates castling and a partner piece.
