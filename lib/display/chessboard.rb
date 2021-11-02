@@ -39,6 +39,11 @@ class Chessboard
     squares.find { |square| square.position == position }
   end
 
+  def update(pieces)
+    reset_squares
+    display_pieces(pieces)
+  end
+
   def display_pieces(pieces)
     pieces.each do |piece|
       square = select(piece.position)
