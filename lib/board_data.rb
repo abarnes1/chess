@@ -31,16 +31,22 @@ class BoardData
     @positions[index] = nil
   end
 
+  def move(piece, position)
+    remove_piece(piece)
+    piece.position = position
+    add_piece(piece)
+  end
+
   def pieces
     @positions.reject(&:nil?)
   end
 
-  def white_pieces
-    player_pieces(@white)
-  end
+  def player_pieces(player)
+    @positions.each_with_object([]) do |piece, pieces|
+      pieces << piece unless piece.nil? || player != piece.owner
 
-  def black_pieces
-    player_pieces(@black)
+      pieces
+    end
   end
 
   def select_position(position)
@@ -56,11 +62,11 @@ class BoardData
   end
 
   def apply(action)
-    raise NotImplementedError
+    action.apply(self)
   end
 
   def undo(action)
-    raise NotImplementedError
+    action.undo(self)
   end
 
   def select_rank(rank)
@@ -81,7 +87,7 @@ class BoardData
     output.reverse.join('/')
   end
 
-  def self.from_fen(white: nil, black: nil, fen: nil)
+  def self.from_fen(white: 'white', black: 'black', fen: nil)
     fen_ranks = fen.split('/').reverse
 
     pieces = []
@@ -94,14 +100,6 @@ class BoardData
   end
 
   private
-
-  def player_pieces(owner)
-    @positions.each_with_object([]) do |piece, pieces|
-      pieces << piece unless piece.nil? || owner != piece.owner
-
-      pieces
-    end
-  end
 
   def position_to_index(position)
     # 'a8' => 0, 'h1' => 63 (index is top to bottom, left to right)
