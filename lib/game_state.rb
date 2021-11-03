@@ -34,8 +34,6 @@ class GameState
     @en_passant_target = EnPassantTarget.new
 
     @half_move_clock = 0
-    @full_move_counter = 0
-    @action_log = []
   end
 
   def pieces
@@ -89,14 +87,13 @@ class GameState
       moves += ActionFactory.actions_for(piece, self)
     end
 
-    moves.reduce([]) do |legal_moves, move|
+    moves.each_with_object([]) do |move, legal_moves|
       legal_moves << move if legal_move?(move)
 
       legal_moves
     end
   end
 
-  # good above here
   def castling_rights(player)
     @castling_rights.player_pairs(player)
   end
@@ -106,7 +103,7 @@ class GameState
   end
 
   def in_check?(player)
-    king = player_king(player)
+    king = @board_data.find_king(player)
     attackable_by_enemy?(king)
   end
 
@@ -114,16 +111,9 @@ class GameState
     action.apply(@board_data)
     @castling_rights.update(action.move_from)
     @en_passant_target.update(action)
-    update_halfmove(action)
-    update_fullmove(@active_player)
+    update_half_move_clock(action)
 
     @active_player = @active_player == @white ? @black : @white
-    @action_log << action
-  end
-
-  def undo_last_action
-    action = @action_log.pop
-    action.undo(self)
   end
 
   def legal_state?(owner)
@@ -132,38 +122,7 @@ class GameState
     true
   end
 
-  def last_moves(count)
-    return [] if action_log.empty?
-
-    action_log.reverse[0..count]
-  end
-
-  def last_moves_notation(count)
-    return [] if action_log.empty?
-
-    to_display = action_log.reverse[0..count]
-    to_display.reverse.join("\n")
-  end
-
-  def to_fen
-    notation = Array.new(6)
-    notation[0] = @board_data.to_fen
-    notation[1] = @active_player == @white_player ? 'w' : 'b'
-    notation[2] = @castling_rights.to_fen
-    notation[3] = @en_passant_target.to_fen
-    notation[4] = @half_move_clock
-    notation[5] = @full_move_counter
-
-    notation.join(' ')
-  end
-
   private
-
-  def find_king(player)
-    pieces = player_pieces(player)
-
-    pieces.find { |piece| piece.instance_of?(King) }
-  end
 
   def under_threat?(piece)
     enemy = piece.owner == @white_player ? @black_player : @white_player
@@ -175,7 +134,7 @@ class GameState
   end
 
   def legal_move?(move)
-    king = find_king(@active_player)
+    king = @board_data.find_king(@active_player)
     move.apply(@board_data)
 
     legal = !under_threat?(king)
@@ -190,11 +149,9 @@ class GameState
     threat_map.calculate(pieces_to_map)
   end
 
-  def update_halfmove(action)
-    @half_move_clock
-  end
+  def update_half_move_clock(action)
+    return if [WhitePawn, BlackPawn].include?(action.piece) || [Capture, PromoteCapture].include?(action.class)
 
-  def update_fullmove(player)
-    @full_move_counter += 1 if player == @black_player
+    @half_move_clock += 1
   end
 end
