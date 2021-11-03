@@ -34,12 +34,12 @@ class Move < Action
     moves
   end
 
-  def apply(_game_state)
-    piece.position = move_to
+  def apply(board_data)
+    board_data.move(piece, move_to)
   end
 
-  def undo(_game_state)
-    piece.position = move_from
+  def undo(board_data)
+    board_data.move(piece, move_from)
   end
 
   def to_s
