@@ -22,18 +22,17 @@ require_relative 'pieces/queen'
 class GameState
   include Positioning
 
-  attr_reader :half_move_clock
+  attr_reader :half_move_clock, :active_player
 
   def initialize(pieces: [], white: 'white', black: 'black')
     @white_player = white
     @black_player = black
     @active_player = @white_player
+    @legal_moves = nil
 
     @board_data = BoardData.new(pieces: pieces, white: white, black: black)
     @castling_rights = CastlingRights.new(white: white, black: black)
     @en_passant_target = EnPassantTarget.new
-
-    @half_move_clock = 0
   end
 
   def pieces
@@ -80,15 +79,15 @@ class GameState
     piece.owner != player
   end
 
-  def legal_moves
+  def legal_moves(player)
     moves = []
 
-    player_pieces(@active_player).each do |piece|
+    player_pieces(player).each do |piece|
       moves += ActionFactory.actions_for(piece, self)
     end
 
     moves.each_with_object([]) do |move, legal_moves|
-      legal_moves << move if legal_move?(move)
+      legal_moves << move if legal_move?(player, move)
 
       legal_moves
     end
@@ -104,25 +103,28 @@ class GameState
 
   def in_check?(player)
     king = @board_data.find_king(player)
-    attackable_by_enemy?(king)
+    under_threat?(king)
   end
 
   def apply_action(action)
     action.apply(@board_data)
     @castling_rights.update(action.move_from)
     @en_passant_target.update(action)
-    update_half_move_clock(action)
 
     @active_player = @active_player == @white ? @black : @white
+    @legal_moves = nil
   end
 
-  def legal_state?(owner)
-    return false if in_check?(owner)
+  def legal_move?(player, move)
+    king = @board_data.find_king(player)
+    move.apply(@board_data)
 
-    true
+    legal = !under_threat?(king)
+
+    move.undo(@board_data)
+
+    legal
   end
-
-  private
 
   def under_threat?(piece)
     enemy = piece.owner == @white_player ? @black_player : @white_player
@@ -133,25 +135,10 @@ class GameState
     threat_map.include?(piece.position)
   end
 
-  def legal_move?(move)
-    king = @board_data.find_king(@active_player)
-    move.apply(@board_data)
-
-    legal = !under_threat?(king)
-
-    move.undo(@board_data)
-
-    legal
-  end
+  private
 
   def calc_threat_map(pieces_to_map)
     threat_map = ThreatMap.new(pieces)
     threat_map.calculate(pieces_to_map)
-  end
-
-  def update_half_move_clock(action)
-    return if [WhitePawn, BlackPawn].include?(action.piece) || [Capture, PromoteCapture].include?(action.class)
-
-    @half_move_clock += 1
   end
 end
