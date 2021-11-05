@@ -40,14 +40,14 @@ class Castling < Action
     actions
   end
 
-  def apply(_game_state)
-    piece.position = move_to
-    partner_piece.position = partner_move_to
+  def apply(board_data)
+    board_data.move(@piece, move_to)
+    board_data.move(@partner_piece, partner_move_to)
   end
 
-  def undo(_game_state)
-    piece.position = move_from
-    partner_piece.position = partner_move_from
+  def undo(board_data)
+    board_data.move(@piece, move_from)
+    board_data.move(@partner_piece, partner_move_from)
   end
 
   def to_s

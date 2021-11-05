@@ -36,9 +36,10 @@ class Promote < Action
 
   def apply(game_state)
     game_state.remove_piece(piece)
-    game_state.add_piece(promote_to)
 
     promote_to.position = move_to
+
+    game_state.add_piece(promote_to)
   end
 
   def undo(game_state)

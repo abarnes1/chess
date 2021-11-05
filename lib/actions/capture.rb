@@ -32,16 +32,16 @@ class Capture < Action
     moves
   end
 
-  def apply(game_state)
-    piece.position = move_to
+  def apply(board_data)
+    board_data.remove_piece(@captured)
 
-    game_state.remove_piece(@captured)
+    board_data.move(piece, move_to)
   end
 
-  def undo(game_state)
-    piece.position = move_from
+  def undo(board_data)
+    board_data.move(piece, move_from)
 
-    game_state.add_piece(@captured)
+    board_data.add_piece(@captured)
   end
 
   def to_s
