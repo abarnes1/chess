@@ -109,7 +109,7 @@ class Castling < Action
       destination = king_destination(king, rook)
       path = linear_path_from_positions(king.position, destination)
 
-      path.any? { |position| game_state.attackable_by_enemy?(king.owner, position) }
+      path.any? { |position| game_state.under_threat?(king) }
     end
   end
 end
