@@ -14,6 +14,7 @@ class ChessGame
     @game_state = nil
     @current_player = nil
     @winner = nil
+    @turn_counter = 0
     @game_over = false
 
     @chessboard = Chessboard.new
@@ -67,31 +68,24 @@ class ChessGame
 
       play_next_turn(@current_player)
 
-      @winner = @current_player if game_over?
-
       switch_player
     end
   end
 
   def play_next_turn(player)
-    puts '-------- start of turn ---------'
+    puts "-------- start of turn #{@turn_counter} ---------"
     moves = @game_state.legal_moves(@current_player)
 
-    if game_over?(moves)
-      @winner = opposing_player if @game_state.in_check?(@current_player)
-      return
-    end
+    update_game_status(@current_player, moves.size)
+
+    return if @game_over
 
     chosen_move = player.choose_action(moves)
 
     puts "#{@current_player.name} #{chosen_move}"
     @game_state.apply_action(chosen_move)
-  end
 
-  def game_over?(legal_moves = nil)
-    return false if legal_moves.nil? || legal_moves.size.positive?
-
-    true
+    @turn_counter += 1
   end
 
   def player_input(player)
@@ -99,21 +93,36 @@ class ChessGame
   end
 
   def end_game
-    puts 'game ended'
+    puts @ending_message
   end
 
-  private
+  def opposing_player(player = @current_player)
+    player == @white ? @black : @white
+  end
+
+  def print_intro
+    puts 'Play some chess.'
+  end
 
   def switch_player
     @current_player = opposing_player
   end
 
-  def opposing_player
-    @current_player == @white ? @black : @white
-  end
+  private
 
-  def print_intro
-    puts 'Play some chess.'
+  def update_game_status(player, move_count)
+    return unless move_count.zero? || @turn_counter >= 200
+
+    if @game_state.in_check?(player)
+      @winner = opposing_player(player)
+      @ending_message = "checkmate, #{@winner.name} wins!"
+    elsif @turn_counter >= 200
+      @ending_message = 'draw, too many turns'
+    else
+      @ending_message = 'stalemate'
+    end
+
+    @game_over = true
   end
 
   def standard_piece_setup
