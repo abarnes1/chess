@@ -24,13 +24,13 @@ class GameState
 
   attr_reader :half_move_clock, :active_player
 
-  def initialize(pieces: [], white: 'white', black: 'black')
+  def initialize(pieces: [], white: 'white', black: 'black', board_data: nil)
     @white_player = white
     @black_player = black
     @active_player = @white_player
     @legal_moves = nil
 
-    @board_data = BoardData.new(pieces: pieces, white: white, black: black)
+    @board_data = board_data.nil? ? BoardData.new(pieces: pieces, white: white, black: black) : board_data
     @castling_rights = CastlingRights.new(white: white, black: black)
     @en_passant_target = EnPassantTarget.new
   end
