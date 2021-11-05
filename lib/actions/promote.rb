@@ -11,7 +11,7 @@ class Promote < Action
   def initialize(piece, move_to, promote_to = nil)
     super
     @piece = piece
-    @promote_to = promote_to.nil? ? ChessPiece.new(owner: piece.owner, icon: '?') : promote_to
+    @promote_to = promote_to.nil? ? Queen.new(owner: piece.owner) : promote_to
     @move_to = move_to
   end
 
