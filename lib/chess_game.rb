@@ -4,9 +4,12 @@ require_relative 'game_state'
 require_relative 'human_player'
 require_relative 'computer_player'
 require_relative 'display/chessboard'
+require_relative 'terminal_ui'
 
 # Logic to setup, start, allow moves, and end a game of chess.
 class ChessGame
+  attr_reader :game_over, :ui
+
   def initialize
     @white = 'white'
     @black = 'black'
@@ -17,11 +20,11 @@ class ChessGame
     @turn_counter = 0
     @game_over = false
 
-    @chessboard = Chessboard.new
+    @ui = TerminalUI.new
   end
 
   def play_game
-    print_intro
+    ui.display_intro
     setup_game
     puts @chessboard.to_s
 
@@ -35,9 +38,9 @@ class ChessGame
     # create players
     @white = create_player('white', Colors::CYAN)
     @black = create_player('black', Colors::BRIGHT_MAGENTA)
-    @current_player = @white
+    @current_player = white
 
-    @game_state = GameState.new(white: @white, black: @black)
+    @game_state = GameState.new(white: white, black: black)
     standard_piece_setup
   end
 
@@ -62,9 +65,8 @@ class ChessGame
     until @game_over
       # system('clear')
 
-      @chessboard.reset_squares
-      @chessboard.display_pieces(@game_state.pieces)
-      puts @chessboard.display
+      ui.update_pieces(game_state.pieces)
+      ui.display_chessboard
 
       play_next_turn(@current_player)
 
@@ -74,11 +76,11 @@ class ChessGame
 
   def play_next_turn(player)
     puts "-------- start of turn #{@turn_counter} ---------"
-    moves = @game_state.legal_moves(@current_player)
+    moves = game_state.legal_moves(@current_player)
 
-    update_game_status(@current_player, moves.size)
+    update_game_over_status(@current_player, moves.size)
 
-    return if @game_over
+    return if game_over
 
     chosen_move = player.choose_action(moves)
 
@@ -97,7 +99,7 @@ class ChessGame
   end
 
   def opposing_player(player = @current_player)
-    player == @white ? @black : @white
+    player == white ? black : white
   end
 
   def print_intro
@@ -110,7 +112,9 @@ class ChessGame
 
   private
 
-  def update_game_status(player, move_count)
+  attr_reader :game_state, :white, :black
+
+  def update_game_over_status(player, move_count)
     return unless move_count.zero? || @turn_counter >= 200
 
     if @game_state.in_check?(player)
@@ -126,40 +130,40 @@ class ChessGame
   end
 
   def standard_piece_setup
-    @game_state.add_piece(Rook.new(position: Position.new('a1'), owner: @white))
-    @game_state.add_piece(Knight.new(position: Position.new('b1'), owner: @white))
-    @game_state.add_piece(Bishop.new(position: Position.new('c1'), owner: @white))
-    @game_state.add_piece(Queen.new(position: Position.new('d1'), owner: @white))
-    @game_state.add_piece(King.new(position: Position.new('e1'), owner: @white))
-    @game_state.add_piece(Bishop.new(position: Position.new('f1'), owner: @white))
-    @game_state.add_piece(Knight.new(position: Position.new('g1'), owner: @white))
-    @game_state.add_piece(Rook.new(position: Position.new('h1'), owner: @white))
+    game_state.add_piece(Rook.new(position: Position.new('a1'), owner: white))
+    game_state.add_piece(Knight.new(position: Position.new('b1'), owner: white))
+    game_state.add_piece(Bishop.new(position: Position.new('c1'), owner: white))
+    game_state.add_piece(Queen.new(position: Position.new('d1'), owner: white))
+    game_state.add_piece(King.new(position: Position.new('e1'), owner: white))
+    game_state.add_piece(Bishop.new(position: Position.new('f1'), owner: white))
+    game_state.add_piece(Knight.new(position: Position.new('g1'), owner: white))
+    game_state.add_piece(Rook.new(position: Position.new('h1'), owner: white))
 
-    @game_state.add_piece(WhitePawn.new(position: Position.new('a2'), owner: @white))
-    @game_state.add_piece(WhitePawn.new(position: Position.new('b2'), owner: @white))
-    @game_state.add_piece(WhitePawn.new(position: Position.new('c2'), owner: @white))
-    @game_state.add_piece(WhitePawn.new(position: Position.new('d2'), owner: @white))
-    @game_state.add_piece(WhitePawn.new(position: Position.new('e2'), owner: @white))
-    @game_state.add_piece(WhitePawn.new(position: Position.new('f2'), owner: @white))
-    @game_state.add_piece(WhitePawn.new(position: Position.new('g2'), owner: @white))
-    @game_state.add_piece(WhitePawn.new(position: Position.new('h2'), owner: @white))
+    game_state.add_piece(WhitePawn.new(position: Position.new('a2'), owner: white))
+    game_state.add_piece(WhitePawn.new(position: Position.new('b2'), owner: white))
+    game_state.add_piece(WhitePawn.new(position: Position.new('c2'), owner: white))
+    game_state.add_piece(WhitePawn.new(position: Position.new('d2'), owner: white))
+    game_state.add_piece(WhitePawn.new(position: Position.new('e2'), owner: white))
+    game_state.add_piece(WhitePawn.new(position: Position.new('f2'), owner: white))
+    game_state.add_piece(WhitePawn.new(position: Position.new('g2'), owner: white))
+    game_state.add_piece(WhitePawn.new(position: Position.new('h2'), owner: white))
 
-    @game_state.add_piece(Rook.new(position: Position.new('a8'), owner: @black))
-    @game_state.add_piece(Knight.new(position: Position.new('b8'), owner: @black))
-    @game_state.add_piece(Bishop.new(position: Position.new('c8'), owner: @black))
-    @game_state.add_piece(Queen.new(position: Position.new('d8'), owner: @black))
-    @game_state.add_piece(King.new(position: Position.new('e8'), owner: @black))
-    @game_state.add_piece(Bishop.new(position: Position.new('f8'), owner: @black))
-    @game_state.add_piece(Knight.new(position: Position.new('g8'), owner: @black))
-    @game_state.add_piece(Rook.new(position: Position.new('h8'), owner: @black))
+    game_state.add_piece(Rook.new(position: Position.new('a8'), owner: black))
+    game_state.add_piece(Knight.new(position: Position.new('b8'), owner: black))
+    game_state.add_piece(Bishop.new(position: Position.new('c8'), owner: black))
+    game_state.add_piece(Queen.new(position: Position.new('d8'), owner: black))
+    game_state.add_piece(King.new(position: Position.new('e8'), owner: black))
+    game_state.add_piece(Bishop.new(position: Position.new('f8'), owner: black))
+    game_state.add_piece(Knight.new(position: Position.new('g8'), owner: black))
+    game_state.add_piece(Rook.new(position: Position.new('h8'), owner: black))
 
-    @game_state.add_piece(BlackPawn.new(position: Position.new('a7'), owner: @black))
-    @game_state.add_piece(BlackPawn.new(position: Position.new('b7'), owner: @black))
-    @game_state.add_piece(BlackPawn.new(position: Position.new('c7'), owner: @black))
-    @game_state.add_piece(BlackPawn.new(position: Position.new('d7'), owner: @black))
-    @game_state.add_piece(BlackPawn.new(position: Position.new('e7'), owner: @black))
-    @game_state.add_piece(BlackPawn.new(position: Position.new('f7'), owner: @black))
-    @game_state.add_piece(BlackPawn.new(position: Position.new('g7'), owner: @black))
-    @game_state.add_piece(BlackPawn.new(position: Position.new('h7'), owner: @black))
+    game_state.add_piece(BlackPawn.new(position: Position.new('a7'), owner: black))
+    game_state.add_piece(BlackPawn.new(position: Position.new('b7'), owner: black))
+    game_state.add_piece(BlackPawn.new(position: Position.new('c7'), owner: black))
+    game_state.add_piece(BlackPawn.new(position: Position.new('d7'), owner: black))
+    game_state.add_piece(BlackPawn.new(position: Position.new('e7'), owner: black))
+    game_state.add_piece(BlackPawn.new(position: Position.new('f7'), owner: black))
+    game_state.add_piece(BlackPawn.new(position: Position.new('g7'), owner: black))
+    game_state.add_piece(BlackPawn.new(position: Position.new('h7'), owner: black))
   end
 end

@@ -45,6 +45,8 @@ class Chessboard
   end
 
   def display_pieces(pieces)
+    reset_squares
+
     pieces.each do |piece|
       square = select(piece.position)
       square.piece = piece
