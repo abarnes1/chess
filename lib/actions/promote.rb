@@ -6,7 +6,6 @@ require_relative 'action'
 # reaching a position on a standard chessboard.
 class Promote < Action
   attr_accessor :promote_to
-  attr_reader :move_from, :move_to, :piece
 
   def initialize(piece, move_to, promote_to = nil)
     super

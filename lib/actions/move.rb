@@ -5,8 +5,6 @@ require_relative 'action'
 # A basic chess move where one piece moves from
 # its current square to another unoccupied square.
 class Move < Action
-  attr_accessor :piece, :move_from, :move_to
-
   def initialize(piece = nil, move_from = nil, move_to = nil)
     super
     @piece = piece

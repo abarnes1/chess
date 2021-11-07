@@ -5,7 +5,7 @@ require_relative 'action'
 # A chess move that allows pawns to capture other pawns that
 # move past their capturable positions on the previous turn.
 class EnPassant < Action
-  attr_reader :piece, :move_to, :move_from, :captured
+  attr_reader :captured
 
   def initialize(piece, move_from, move_to, captured)
     super

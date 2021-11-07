@@ -6,7 +6,6 @@ require_relative 'action'
 # square to another square occupied by an enemy piece.
 class PromoteCapture < Action
   attr_accessor :promote_to
-  attr_reader :move_from, :move_to, :piece
 
   def initialize(piece, move_from, move_to, captured, promote_to = nil)
     super

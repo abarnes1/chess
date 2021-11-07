@@ -5,7 +5,7 @@ require_relative 'action'
 # Castling chess action between a piece that
 # initiates castling and a partner piece.
 class Castling < Action
-  attr_accessor :piece, :move_from, :move_to, :partner_piece, :partner_move_from, :partner_move_to
+  attr_accessor :partner_piece, :partner_move_from, :partner_move_to
 
   def initialize(piece, move_from, move_to, partner_piece, partner_move_to)
     super

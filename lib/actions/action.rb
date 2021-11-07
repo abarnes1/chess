@@ -8,6 +8,8 @@ require_relative '../modules/positioning'
 class Action
   extend Positioning
 
+  attr_reader :move_from, :move_to, :piece
+
   def initialize(*_args) end
 
   def self.register_child(child)
