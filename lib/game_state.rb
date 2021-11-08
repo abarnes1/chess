@@ -22,7 +22,7 @@ require_relative 'pieces/queen'
 class GameState
   include Positioning
 
-  attr_reader :half_move_clock, :active_player
+  attr_reader :half_move_clock, :active_player, :white_player, :black_player
 
   def initialize(pieces: [], white: 'white', black: 'black', board_data: nil)
     @white_player = white
