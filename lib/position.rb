@@ -28,4 +28,12 @@ class Position
 
     ('a'..'h').include?(file) && ('1'..'8').include?(rank)
   end
+
+  def white_square?
+    !((@file.ord + rank.to_i) % 2).zero?
+  end
+
+  def black_square?
+    ((@file.ord + rank.to_i) % 2).zero?
+  end
 end
