@@ -6,6 +6,7 @@ require_relative 'threat_map'
 require_relative 'board_data'
 require_relative 'castling_rights'
 require_relative 'en_passant_target'
+require_relative 'half_move_clock'
 
 require_relative 'pieces/bishop'
 require_relative 'pieces/rook'
@@ -22,7 +23,7 @@ require_relative 'pieces/queen'
 class GameState
   include Positioning
 
-  attr_reader :half_move_clock, :active_player, :white_player, :black_player
+  attr_reader :active_player, :white_player, :black_player
 
   def initialize(pieces: [], white: 'white', black: 'black', board_data: nil)
     @white_player = white
@@ -30,11 +31,11 @@ class GameState
     @active_player = @white_player
     @white_legal_moves = nil
     @black_legal_moves = nil
-    @half_move_clock = 0
 
     @board_data = board_data.nil? ? BoardData.new(pieces: pieces, white: white, black: black) : board_data
     @castling_rights = CastlingRights.new(white: white, black: black)
     @en_passant_target = EnPassantTarget.new
+    @half_move_clock = HalfMoveClock.new
   end
 
   def pieces
@@ -99,6 +100,10 @@ class GameState
     @en_passant_target.target
   end
 
+  def half_move_clock
+    @half_move_clock.counter
+  end
+
   def in_check?(player)
     king = @board_data.find_king(player)
     under_threat?(king)
@@ -108,7 +113,7 @@ class GameState
     action.apply(@board_data)
     @castling_rights.update(action.move_from)
     @en_passant_target.update(action)
-    @half_move_clock += 1
+    @half_move_clock.update(action)
 
     @active_player = @active_player == @white_player ? @black_player : @white_player
 

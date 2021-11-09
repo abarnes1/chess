@@ -66,18 +66,18 @@ class ChessGame
   def play_turns
     until game_over?
       # system('clear')
+      puts "-------- start of turn #{@turn_counter} ---------"
+
+      play_next_turn(current_player)
 
       ui.update_pieces(game_state.pieces)
       ui.display_chessboard
-
-      play_next_turn(current_player)
 
       switch_player
     end
   end
 
   def play_next_turn(player)
-    puts "-------- start of turn #{@turn_counter} ---------"
     moves = game_state.legal_moves(current_player)
 
     chosen_move = player.choose_action(moves)

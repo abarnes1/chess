@@ -16,7 +16,12 @@ class TerminalUI
   def display_chessboard
     puts chessboard.display
   end
-  
+
+  def display_ending(ending)
+    puts chessboard.display
+    puts ending.message
+  end
+
   def get_player_class(description)
     player_class = nil
 
@@ -38,8 +43,6 @@ class TerminalUI
       HumanPlayer
     when '2'
       ComputerPlayer
-    else
-      nil
     end
   end
 end
