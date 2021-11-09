@@ -28,7 +28,9 @@ class GameState
     @white_player = white
     @black_player = black
     @active_player = @white_player
-    @legal_moves = nil
+    @white_legal_moves = nil
+    @black_legal_moves = nil
+    @half_move_clock = 0
 
     @board_data = board_data.nil? ? BoardData.new(pieces: pieces, white: white, black: black) : board_data
     @castling_rights = CastlingRights.new(white: white, black: black)
@@ -80,16 +82,12 @@ class GameState
   end
 
   def legal_moves(player)
-    moves = []
-
-    player_pieces(player).each do |piece|
-      moves += ActionFactory.actions_for(piece, self)
-    end
-
-    moves.each_with_object([]) do |move, legal_moves|
-      legal_moves << move if legal_move?(player, move)
-
-      legal_moves
+    if player == white_player
+      white_legal_moves
+    elsif player == black_player
+      black_legal_moves
+    else
+      []
     end
   end
 
@@ -110,9 +108,12 @@ class GameState
     action.apply(@board_data)
     @castling_rights.update(action.move_from)
     @en_passant_target.update(action)
+    @half_move_clock += 1
 
-    @active_player = @active_player == @white ? @black : @white
-    @legal_moves = nil
+    @active_player = @active_player == @white_player ? @black_player : @white_player
+
+    @white_legal_moves = nil
+    @black_legal_moves = nil
   end
 
   def legal_move?(player, move)
@@ -135,10 +136,40 @@ class GameState
     threat_map.include?(piece.position)
   end
 
+  def opposing_player(player = current_player)
+    player == @white_player ? @black_player : @white_player
+  end
+
   private
 
   def calc_threat_map(pieces_to_map)
     threat_map = ThreatMap.new(pieces)
     threat_map.calculate(pieces_to_map)
+  end
+
+  def black_legal_moves
+    @black_legal_moves = generate_legal_moves(black_player) if @black_legal_moves.nil?
+
+    @black_legal_moves
+  end
+
+  def white_legal_moves
+    @white_legal_moves = generate_legal_moves(white_player) if @white_legal_moves.nil?
+
+    @white_legal_moves
+  end
+
+  def generate_legal_moves(player)
+    moves = []
+
+    player_pieces(player).each do |piece|
+      moves += ActionFactory.actions_for(piece, self)
+    end
+
+    moves.each_with_object([]) do |move, legal_moves|
+      legal_moves << move if legal_move?(player, move)
+
+      legal_moves
+    end
   end
 end

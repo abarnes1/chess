@@ -1,17 +1,27 @@
 # frozen_string_literal: true
-
-require_relative 'game_state'
 require_relative 'human_player'
 require_relative 'computer_player'
+
+require_relative 'game_state'
+require_relative 'game_ending'
+
+require_relative 'pieces/piece_sets'
+
 require_relative 'display/chessboard'
 require_relative 'terminal_ui'
-require_relative 'pieces/piece_sets'
 
 # Logic to setup, start, allow moves, and end a game of chess.
 class ChessGame
   include PieceSets
 
   attr_reader :game_over, :ui
+
+  private
+
+  attr_reader :white, :black, :game_state, :game_end
+  attr_accessor :current_player
+
+  public
 
   def initialize
     @white = 'white'
@@ -21,7 +31,7 @@ class ChessGame
     @current_player = nil
     @winner = nil
     @turn_counter = 0
-    @game_over = false
+    @game_end = GameEnding.new
 
     @ui = TerminalUI.new
   end
@@ -41,7 +51,7 @@ class ChessGame
     # create players
     @white = create_player('white', Colors::CYAN)
     @black = create_player('black', Colors::BRIGHT_MAGENTA)
-    @current_player = white
+    self.current_player = white
 
     @game_state = GameState.new(white: white, black: black)
     standard_piece_setup(game_state)
@@ -54,7 +64,7 @@ class ChessGame
   end
 
   def play_turns
-    until @game_over
+    until game_over?
       # system('clear')
 
       ui.update_pieces(game_state.pieces)
@@ -68,18 +78,16 @@ class ChessGame
 
   def play_next_turn(player)
     puts "-------- start of turn #{@turn_counter} ---------"
-    moves = game_state.legal_moves(@current_player)
-
-    update_game_over_status(@current_player, moves.size)
-
-    return if game_over
+    moves = game_state.legal_moves(current_player)
 
     chosen_move = player.choose_action(moves)
 
-    puts "#{@current_player.name} #{chosen_move}"
+    puts "#{current_player.name} #{chosen_move}"
     @game_state.apply_action(chosen_move)
 
     @turn_counter += 1
+
+    game_end.update(game_state)
   end
 
   def player_input(player)
@@ -87,7 +95,7 @@ class ChessGame
   end
 
   def end_game
-    puts @ending_message
+    puts game_end.message
   end
 
   def opposing_player(player = current_player)
@@ -95,26 +103,10 @@ class ChessGame
   end
 
   def switch_player
-    @current_player = opposing_player
+    self.current_player = opposing_player
   end
 
-  private
-
-  attr_accessor :current_player
-  attr_reader :game_state, :white, :black
-
-  def update_game_over_status(player, move_count)
-    return unless move_count.zero? || @turn_counter >= 200
-
-    if @game_state.in_check?(player)
-      @winner = opposing_player(player)
-      @ending_message = "checkmate, #{@winner.name} wins!"
-    elsif @turn_counter >= 200
-      @ending_message = 'draw, too many turns'
-    else
-      @ending_message = 'stalemate'
-    end
-
-    @game_over = true
+  def game_over?
+    game_end.ending?
   end
 end
