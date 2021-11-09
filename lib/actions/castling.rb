@@ -22,7 +22,7 @@ class Castling < Action
 
     actions = []
 
-    active_pairs = game_state.castling_rights(king.owner)
+    active_pairs = game_state.player_castling_rights(king.owner)
 
     active_pairs.each do |pair|
       next unless valid_pair?(pair, game_state)

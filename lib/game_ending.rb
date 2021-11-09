@@ -19,6 +19,7 @@ class GameEnding
     king_vs_king_bishop?(game_state) unless ending?
     king_vs_king_knight?(game_state) unless ending?
     king_vs_king?(game_state) unless ending?
+    five_fold_repetition?(game_state) unless ending?
   end
 
   def ending?
@@ -118,5 +119,10 @@ class GameEnding
 
   def find_bishop(pieces)
     bishop = pieces.find { |piece| piece.instance_of?(Bishop)}
+  end
+
+  def five_fold_repetition?(game_state)
+    p game_state.repetitions
+    @message = 'Draw by five-fold repetition.' if game_state.repetitions >= 5
   end
 end

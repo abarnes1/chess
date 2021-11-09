@@ -75,6 +75,36 @@ class BoardData
     pieces.find { |piece| piece.instance_of?(King) }
   end
 
+  def to_fen_component
+    output = []
+    ('1'..'8').to_a.each do |rank|
+      current_rank = select_rank(rank)
+      output << encode_rank_to_fen(@white_player, current_rank)
+    end
+
+    output.reverse.join('/')
+  end
+
+  def encode_rank_to_fen(white_owner, rank)
+    output = ''
+    gap = 0
+
+    rank.each do |piece|
+      if piece.nil?
+        gap += 1
+      else
+        output += gap.to_s if gap.positive?
+        gap = 0
+
+        output += piece.owner == white_owner ? piece.notation_letter : piece.notation_letter.downcase
+      end
+    end
+
+    output += gap.to_s if gap.positive?
+
+    output
+  end
+
   private
 
   def position_to_index(position)
@@ -83,5 +113,13 @@ class BoardData
     index_from_rank = (8 - position.rank.to_i) * 8
 
     index_from_file + index_from_rank
+  end
+
+  def select_rank(rank)
+    ('a'..'h').to_a.reduce([]) do |rank_objects, file|
+      index = position_to_index(Position.new(file + rank))
+
+      rank_objects << @positions[index]
+    end
   end
 end

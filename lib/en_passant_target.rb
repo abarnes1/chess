@@ -24,6 +24,10 @@ class EnPassantTarget
     @target = moved_path[1]
   end
 
+  def to_fen_component
+    @target.nil? ? '-' : @target.to_s
+  end
+
   private
 
   def pawn_move?(action)
@@ -34,3 +38,7 @@ class EnPassantTarget
     path[1..-1].size == 2
   end
 end
+
+tester = EnPassantTarget.new
+
+puts tester.to_fen_component

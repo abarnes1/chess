@@ -30,7 +30,7 @@ class CastlingRights
     @black_queen_side.update(position_moved_from)
   end
 
-  def to_fen
+  def to_fen_component
     output = ''
 
     output += 'K' if @white_king_side.enabled?
@@ -39,16 +39,5 @@ class CastlingRights
     output += 'q' if @black_queen_side.enabled?
 
     output.empty? ? '-' : output
-  end
-
-  def self.from_fen(white: 'white', black: 'black', fen: '-')
-    rights = CastlingRights.new(white: white, black: black)
-
-    rights.update(Position.new('h1')) unless fen.include?('K')
-    rights.update(Position.new('a1')) unless fen.include?('Q')
-    rights.update(Position.new('h8')) unless fen.include?('k')
-    rights.update(Position.new('a8')) unless fen.include?('q')
-
-    rights
   end
 end

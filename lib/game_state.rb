@@ -7,6 +7,8 @@ require_relative 'board_data'
 require_relative 'castling_rights'
 require_relative 'en_passant_target'
 require_relative 'half_move_clock'
+require_relative 'repetition_log'
+require_relative 'forsythe_edwards_notation'
 
 require_relative 'pieces/bishop'
 require_relative 'pieces/rook'
@@ -22,8 +24,9 @@ require_relative 'pieces/queen'
 # creation without adding a bunch of methods to the Action class(es).
 class GameState
   include Positioning
+  include ForsytheEdwardsNotation
 
-  attr_reader :active_player, :white_player, :black_player
+  attr_reader :active_player, :white_player, :black_player, :full_move_counter
 
   def initialize(pieces: [], white: 'white', black: 'black', board_data: nil)
     @white_player = white
@@ -36,6 +39,8 @@ class GameState
     @castling_rights = CastlingRights.new(white: white, black: black)
     @en_passant_target = EnPassantTarget.new
     @half_move_clock = HalfMoveClock.new
+    @full_move_counter = 1
+    @repetition_log = RepetitionLog.new
   end
 
   def pieces
@@ -92,11 +97,11 @@ class GameState
     end
   end
 
-  def castling_rights(player)
+  def player_castling_rights(player)
     @castling_rights.player_pairs(player)
   end
 
-  def en_passant_target
+  def active_en_passant_target
     @en_passant_target.target
   end
 
@@ -114,8 +119,11 @@ class GameState
     @castling_rights.update(action.move_from)
     @en_passant_target.update(action)
     @half_move_clock.update(action)
+    @full_move_counter += 1 if @active_player == @black_player
 
     @active_player = @active_player == @white_player ? @black_player : @white_player
+
+    @repetition_log.update(repetition_fen)
 
     @white_legal_moves = nil
     @black_legal_moves = nil
@@ -145,7 +153,13 @@ class GameState
     player == @white_player ? @black_player : @white_player
   end
 
+  def repetitions
+    @repetition_log.repetitions
+  end
+
   private
+
+  attr_reader :board_data, :castling_rights, :en_passant_target
 
   def calc_threat_map(pieces_to_map)
     threat_map = ThreatMap.new(pieces)

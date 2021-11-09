@@ -18,7 +18,7 @@ class EnPassant < Action
   def self.create_for(piece, game_state)
     return nil if game_state.nil? || !valid_initiator?(piece)
 
-    target = game_state.en_passant_target
+    target = game_state.active_en_passant_target
 
     return nil if target.nil?
     # return nil unless move_enables_en_passant?(piece, last_move)
