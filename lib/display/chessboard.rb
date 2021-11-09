@@ -21,18 +21,22 @@ class Chessboard
   end
 
   def display
-    output = ''
+    displayable_rows.join("\n")
+  end
+
+  def displayable_rows
+    output = []
     ranks = ('1'..'8').to_a.reverse
 
     ranks.each_with_index do |rank, index|
-      output += "#{(index - 8).abs} "
+      new_line = "#{(index - 8).abs} "
       row = squares.select { |square| square.rank == rank }
 
-      row.each { |item| output += item.to_s }
-      output += "\n"
+      row.each { |item| new_line += item.to_s }
+      output << new_line
     end
 
-    output += "  a b c d e f g h\n"
+    output << '  a b c d e f g h'
   end
 
   def select(position)
@@ -79,6 +83,10 @@ class Chessboard
   end
 
   private
+
+  def displayable_rank(rank)
+
+  end
 
   def piece_color(owner)
     if owner.respond_to?(:color)

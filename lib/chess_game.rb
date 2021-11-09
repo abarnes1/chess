@@ -65,13 +65,10 @@ class ChessGame
 
   def play_turns
     until game_over?
-      # system('clear')
-      puts "-------- start of turn #{@turn_counter} ---------"
+      ui.update_pieces(game_state.pieces)
+      ui.display_turn_start(current_player, game_state.in_check?(current_player))
 
       play_next_turn(current_player)
-
-      ui.update_pieces(game_state.pieces)
-      ui.display_chessboard
 
       switch_player
     end
@@ -80,22 +77,31 @@ class ChessGame
   def play_next_turn(player)
     moves = game_state.legal_moves(current_player)
 
-    chosen_move = player.choose_action(moves)
+    chosen_move = if player.instance_of?(ComputerPlayer)
+                    player.choose_action(moves)
+                  else
+                    input = ui.player_turn_input
+
+                    until valid_turn_selection(input, moves)
+                      ui.display_invalid_selection
+                      input = ui.player_turn_input
+                    end
+
+                    save_game if input == 'save'
+                    quit_game if input == 'quit'
+
+                    find_move(input, moves)
+                  end
 
     puts "#{current_player.name} #{chosen_move}"
     @game_state.apply_action(chosen_move)
 
-    @turn_counter += 1
-
     game_end.update(game_state)
   end
 
-  def player_input(player)
-    player.choose_action(actions)
-  end
-
   def end_game
-    puts game_end.message
+    ui.update_pieces(game_state.pieces)
+    ui.display_game_end(game_end.message) if game_over?
   end
 
   def opposing_player(player = current_player)
@@ -108,5 +114,22 @@ class ChessGame
 
   def game_over?
     game_end.ending?
+  end
+
+  private
+
+  def find_move(input, moves)
+    return nil unless input.size == 4
+
+    from = Position.new(input[0..1])
+    to = Position.new(input[2..-1])
+
+    moves.find { |move| move.move_from == from and move.move_to == to }
+  end
+
+  def valid_turn_selection(input, moves)
+    selected_move = find_move(input, moves)
+
+    %w[save quit].include?(input) || selected_move
   end
 end

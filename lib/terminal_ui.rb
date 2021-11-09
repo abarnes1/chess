@@ -17,11 +17,6 @@ class TerminalUI
     puts chessboard.display
   end
 
-  def display_ending(ending)
-    puts chessboard.display
-    puts ending.message
-  end
-
   def get_player_class(description)
     player_class = nil
 
@@ -31,6 +26,27 @@ class TerminalUI
     end
 
     player_class
+  end
+
+  def display_game_end(message)
+    system('clear')
+    display_chessboard
+    puts message
+  end
+
+  def display_turn_start(player, in_check)
+    system('clear')
+    display_chessboard
+    puts in_check ? "#{player.name}'s turn. You're in check!" : "#{player.name}'s turn."
+    print "Enter save, quit, or select a piece's location: "
+  end
+
+  def player_turn_input
+    gets.chomp.downcase
+  end
+
+  def display_invalid_selection
+    print "That's not valid... try again: "
   end
 
   private

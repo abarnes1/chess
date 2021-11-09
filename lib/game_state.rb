@@ -26,7 +26,7 @@ class GameState
   include Positioning
   include ForsytheEdwardsNotation
 
-  attr_reader :active_player, :white_player, :black_player, :full_move_counter
+  attr_reader :active_player, :white_player, :black_player, :full_move_counter, :castling_rights, :en_passant_target
 
   def initialize(pieces: [], white: 'white', black: 'black', board_data: nil)
     @white_player = white
@@ -159,7 +159,7 @@ class GameState
 
   private
 
-  attr_reader :board_data, :castling_rights, :en_passant_target
+  attr_reader :board_data
 
   def calc_threat_map(pieces_to_map)
     threat_map = ThreatMap.new(pieces)
