@@ -7,8 +7,6 @@ class RepetitionLog
     key = repetition_value.to_sym
 
     log[key] += 1
-
-    puts "logging: #{key}"
   end
 
   def repetitions

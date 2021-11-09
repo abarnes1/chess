@@ -122,7 +122,6 @@ class GameEnding
   end
 
   def five_fold_repetition?(game_state)
-    p game_state.repetitions
     @message = 'Draw by five-fold repetition.' if game_state.repetitions >= 5
   end
 end
