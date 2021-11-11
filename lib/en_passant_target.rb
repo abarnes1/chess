@@ -38,7 +38,3 @@ class EnPassantTarget
     path[1..-1].size == 2
   end
 end
-
-tester = EnPassantTarget.new
-
-puts tester.to_fen_component
