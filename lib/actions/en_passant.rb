@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'action'
+require 'pry-byebug'
 
 # A chess move that allows pawns to capture other pawns that
 # move past their capturable positions on the previous turn.
@@ -18,9 +19,11 @@ class EnPassant < Action
   def self.create_for(piece, game_state)
     return nil if game_state.nil? || !valid_initiator?(piece)
 
+    # binding.pry
     target_position = game_state.active_en_passant_target
 
     return nil if target_position.nil?
+    return nil unless attackable?(piece, target_position)
 
     captured_position = identify_capture_position(piece, target_position)
     captured_piece = game_state.select_position(captured_position)
@@ -34,16 +37,16 @@ class EnPassant < Action
     true
   end
 
-  def apply(game_state)
-    piece.position = move_to
+  def apply(board_data)
+    board_data.remove_piece(@captured)
 
-    game_state.remove_piece(@captured)
+    board_data.move(piece, move_to)
   end
 
-  def undo(game_state)
-    piece.position = move_from
+  def undo(board_data)
+    board_data.move(piece, move_from)
 
-    game_state.add_piece(@captured)
+    board_data.add_piece(@captured)
   end
 
   def to_s
@@ -57,6 +60,11 @@ class EnPassant < Action
   class << self
     private
 
+    def attackable?(piece, position)
+      attackable_positions = path_group_from_offsets(piece.position, piece.capture_offsets).flatten
+      attackable_positions.any? { |attackable| attackable == position }
+    end
+
     def identify_capture_position(piece, en_passant_target)
       offset_from_pawn = if left_target?(piece.position, en_passant_target)
                            Offset.new([-1, 0])
@@ -64,7 +72,7 @@ class EnPassant < Action
                            Offset.new([1, 0])
                          end
 
-      puts path_from_offset(piece.position, offset_from_pawn)[0]
+      # puts path_from_offset(piece.position, offset_from_pawn)[0]
       path_from_offset(piece.position, offset_from_pawn)[0]
     end
 
