@@ -23,12 +23,4 @@ class King < ChessPiece
 
     @notation_letter = 'K'
   end
-
-  def can_be_checked?
-    true
-  end
-
-  def initiates_castling?
-    true
-  end
 end
