@@ -2,10 +2,6 @@
 
 require_relative '../../lib/pieces/king'
 require_relative '../../lib/game_state'
-require_relative 'shared/default_castling'
-require_relative 'shared/default_castling_partner'
-require_relative 'shared/default_check'
-require_relative 'shared/default_en_passant'
 require_relative 'shared/piece_custom_matchers'
 
 describe King do
@@ -56,20 +52,6 @@ describe King do
     end
   end
 
-  # Knight has no special behaviors
-  context "when #{described_class.name} implements default behaviors" do
-    # include_examples 'default castling behavior'
-    include_examples 'default castling partner behavior'
-    include_examples 'default en passant behavior'
-  end
-
-  describe "#can_be_checked?" do
-    it 'return true' do
-      actual = king.can_be_checked?
-      expect(actual).to be true
-    end
-  end
-
   describe "#actions" do
     context 'when on c4' do
       king_position = Position.new('c4')
@@ -79,7 +61,7 @@ describe King do
   
       context 'when the only piece' do
         before(:all) do
-          @game_state = GameState.new([king_at_c4])
+          @game_state = GameState.new(pieces: [king_at_c4])
           @king_actions = king_at_c4.actions(@game_state)
         end
         
@@ -126,7 +108,7 @@ describe King do
 
         context "when friendlies at #{friendly_positions.join(', ')}" do
           before(:all) do
-            @game_state = GameState.new([king_at_c4])
+            @game_state = GameState.new(pieces: [king_at_c4])
 
             friendly_positions.each do |position|
               @game_state.add_piece(ChessPiece.new(position: Position.new(position), owner: friendly_owner))
@@ -163,7 +145,7 @@ describe King do
 
         context "when enemies at #{enemy_positions.join(', ')}" do
           before(:all) do
-            @game_state = GameState.new([king_at_c4])
+            @game_state = GameState.new(pieces: [king_at_c4])
 
             enemy_positions.each do |position|
               @game_state.add_piece(ChessPiece.new(position: Position.new(position), owner: enemy_owner))
@@ -220,72 +202,132 @@ describe King do
     end
 
     context 'when on e1' do
-      king_position = Position.new('e1')
-      friendly_owner = 'player1'
-      enemy_owner = 'player2'
-      king_at_e1 = described_class.new(position: king_position, owner: friendly_owner)
+      context 'when white player' do
+        king_position = Position.new('e1')
+        friendly_owner = 'player1'
+        enemy_owner = 'player2'
+        king_at_e1 = described_class.new(position: king_position, owner: friendly_owner)
 
-      partner_positions = ['a1', 'h1']
+        partner_positions = ['a1', 'h1']
 
-      context "when castling partners at #{partner_positions.join(', ')}" do
-        context 'when no enemy pieces' do
-          before(:all) do
-            @game_state = GameState.new([king_at_e1])
+        context "when rooks partners at #{partner_positions.join(', ')}" do
+          context 'when no enemy pieces' do
+            before(:all) do
+              @game_state = GameState.new(pieces: [king_at_e1], white: friendly_owner)
 
-            partner_positions.each do |position|
-              @game_state.add_piece(Rook.new(position: Position.new(position), owner: friendly_owner))
+              partner_positions.each do |position|
+                @game_state.add_piece(Rook.new(position: Position.new(position), owner: friendly_owner))
+              end
+
+              @king_actions = king_at_e1.actions(@game_state)
             end
 
-            @king_actions = king_at_e1.actions(@game_state)
-          end
+            it 'has 2 possible castling actions' do
+              actual = @king_actions.select { |action| action.is_a?(Castling)}.size
+              expect(actual).to eq(2)
+            end
 
-          it 'has 2 possible castling actions' do
-            actual = @king_actions.select { |action| action.is_a?(Castling)}.size
-            expect(actual).to eq(2)
-          end
+            it 'can castle to c1' do
+              expect(@king_actions).to be_available_castling(Position.new('c1'))
+            end
 
-          it 'can castle to c1' do
-            expect(@king_actions).to be_available_castling(Position.new('c1'))
+            it 'can castle to g1' do
+              expect(@king_actions).to be_available_castling(Position.new('g1'))
+            end
           end
+        end
+      end
 
-          it 'can castle to g1' do
-            expect(@king_actions).to be_available_castling(Position.new('g1'))
+      context 'when black player' do
+        king_position = Position.new('e1')
+        friendly_owner = 'player1'
+        enemy_owner = 'player2'
+        king_at_e1 = described_class.new(position: king_position, owner: friendly_owner)
+
+        partner_positions = ['a1', 'h1']
+
+        context "when friendly rooks at #{partner_positions.join(', ')}" do
+          context 'when no enemy pieces' do
+            before(:all) do
+              @game_state = GameState.new(pieces: [king_at_e1], black: friendly_owner)
+
+              partner_positions.each do |position|
+                @game_state.add_piece(Rook.new(position: Position.new(position), owner: friendly_owner))
+              end
+
+              @king_actions = king_at_e1.actions(@game_state)
+            end
+
+            it 'has 0 possible castling actions' do
+              actual = @king_actions.select { |action| action.is_a?(Castling)}.size
+              expect(actual).to eq(0)
+            end
           end
         end
       end
     end
 
     context 'when on e8' do
-      king_position = Position.new('e8')
-      friendly_owner = 'player1'
-      enemy_owner = 'player2'
-      king_at_e8 = described_class.new(position: king_position, owner: friendly_owner)
+      context 'when white player' do
+        king_position = Position.new('e8')
+        friendly_owner = 'player1'
+        enemy_owner = 'player2'
+        king_at_e8 = described_class.new(position: king_position, owner: friendly_owner)
 
-      partner_positions = ['a8', 'h8']
+        partner_positions = ['a8', 'h8']
 
-      context "when castling partners at #{partner_positions.join(', ')}" do
-        context 'when no enemy pieces' do
-          before(:all) do
-            @game_state = GameState.new([king_at_e8])
+        context "when friendly rooks at #{partner_positions.join(', ')}" do
+          context 'when no enemy pieces' do
+            before(:all) do
+              @game_state = GameState.new(pieces: [king_at_e8], white: friendly_owner)
 
-            partner_positions.each do |position|
-              @game_state.add_piece(Rook.new(position: Position.new(position), owner: friendly_owner))
+              partner_positions.each do |position|
+                @game_state.add_piece(Rook.new(position: Position.new(position), owner: friendly_owner))
+              end
+
+              @king_actions = king_at_e8.actions(@game_state)
             end
 
-            @king_actions = king_at_e8.actions(@game_state)
+            it 'has 0 possible castling actions' do
+              actual = @king_actions.select { |action| action.is_a?(Castling)}.size
+              expect(actual).to eq(0)
+            end
           end
+        end
+      end
+      
+      context 'when black player' do
+        king_position = Position.new('e8')
+        friendly_owner = 'player1'
+        enemy_owner = 'player2'
+        king_at_e8 = described_class.new(position: king_position, owner: friendly_owner)
 
-          it 'has 2 possible castling actions' do
-            actual = @king_actions.select { |action| action.is_a?(Castling)}.size
-            expect(actual).to eq(2)
-          end
+        partner_positions = ['a8', 'h8']
 
-          it 'can castle to c8' do
-            expect(@king_actions).to be_available_castling(Position.new('c8'))
-          end
+        context "when castling partners at #{partner_positions.join(', ')}" do
+          context 'when no enemy pieces' do
+            before(:all) do
+              @game_state = GameState.new(pieces: [king_at_e8], black: friendly_owner)
 
-          it 'can castle to g8' do
-            expect(@king_actions).to be_available_castling(Position.new('g8'))
+              partner_positions.each do |position|
+                @game_state.add_piece(Rook.new(position: Position.new(position), owner: friendly_owner))
+              end
+
+              @king_actions = king_at_e8.actions(@game_state)
+            end
+
+            it 'has 2 possible castling actions' do
+              actual = @king_actions.select { |action| action.is_a?(Castling)}.size
+              expect(actual).to eq(2)
+            end
+
+            it 'can castle to c8' do
+              expect(@king_actions).to be_available_castling(Position.new('c8'))
+            end
+
+            it 'can castle to g8' do
+              expect(@king_actions).to be_available_castling(Position.new('g8'))
+            end
           end
         end
       end
