@@ -1,3 +1,8 @@
+# frozen_string_literal: true
+
+# Represents the half move clock in chess that is used to determine draws
+# due to a series of moves that are done done by Pawns or do not result
+# in a piece being captured.
 class HalfMoveClock
   attr_reader :counter
 
