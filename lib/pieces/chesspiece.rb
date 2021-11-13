@@ -37,24 +37,4 @@ class ChessPiece
   def can_promote_at?(_position = nil)
     false
   end
-
-  def can_en_passant?(_game_state = nil)
-    false
-  end
-
-  def can_be_checked?
-    false
-  end
-
-  def can_castle?(_game_state = nil)
-    false
-  end
-
-  def castling_partner?
-    false
-  end
-
-  def valid_castling_partners(_game_state = nil)
-    nil
-  end
 end
