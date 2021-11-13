@@ -1,5 +1,6 @@
 require_relative '../../lib/actions/move'
 require_relative '../../lib/pieces/chesspiece'
+require_relative '../../lib/board_data'
 
 describe Capture do
   describe '#apply' do
@@ -7,28 +8,36 @@ describe Capture do
     let(:move_to) { Position.new('b3') }
     let(:capturing) { ChessPiece.new }
     let(:captured) { ChessPiece.new }
-    let(:game_state) { double('game_state') }
+    let(:board_data) { BoardData.new }
 
     subject(:apply_capture) { described_class.new(capturing, move_from, move_to, captured)}
 
     before do
-      allow(game_state).to receive(:add_piece)
-      allow(game_state).to receive(:remove_piece)
-
       capturing.position = move_from
       captured.position = move_to
+
+      board_data.add_piece(capturing)
+      board_data.add_piece(captured)
     end
 
-    it 'moves the capturing piece to new position' do
+    it 'updates the capturing piece position' do
       expect {
-        apply_capture.apply(game_state)
+        apply_capture.apply(board_data)
       }.to change { capturing.position }.from(move_from).to(move_to)
     end
 
-    it 'removes the captured piece' do
-      expect(game_state).to receive(:remove_piece).with(captured).once
+    it 'moves the capturing piece' do
+      expect(board_data).to receive(:move).with(capturing, move_to).once
 
-      apply_capture.apply(game_state)
+      apply_capture.apply(board_data)
+    end
+
+    it 'removes the captured piece' do
+      allow(board_data).to receive(:move)
+
+      expect(board_data).to receive(:remove_piece).with(captured).once
+
+      apply_capture.apply(board_data)
     end
   end
 
@@ -37,27 +46,28 @@ describe Capture do
     let(:move_to) { Position.new('b3') }
     let(:capturing) { ChessPiece.new }
     let(:captured) { ChessPiece.new }
-    let(:game_state) { double('game_state') }
+    let(:board_data) { BoardData.new }
 
     subject(:undo_capture) { described_class.new(capturing, move_from, move_to, captured)}
 
     before do
-      allow(game_state).to receive(:add_piece)
-      allow(game_state).to receive(:remove_piece)
-      
       capturing.position = move_to
+      captured.position = move_to
+
+      board_data.add_piece(capturing)
     end
 
-    it 'returnes the capturing piece to original position' do
+    it 'returns the capturing piece to original position' do
       expect {
-        undo_capture.undo(game_state)
+        undo_capture.undo(board_data)
       }.to change { capturing.position }.from(move_to).to(move_from)
     end
 
     it 'adds the captured piece back to the game' do
-      expect(game_state).to receive(:add_piece).with(captured).once
+      allow(board_data).to receive(:move)
+      expect(board_data).to receive(:add_piece).with(captured).once
 
-      undo_capture.undo(game_state)
+      undo_capture.undo(board_data)
     end
   end
 

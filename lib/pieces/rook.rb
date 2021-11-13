@@ -16,8 +16,4 @@ class Rook < ChessPiece
 
     @notation_letter = 'R'
   end
-
-  def castling_partner?
-    true
-  end
 end

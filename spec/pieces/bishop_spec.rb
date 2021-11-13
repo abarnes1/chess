@@ -2,10 +2,6 @@
 
 require_relative '../../lib/pieces/bishop'
 require_relative '../../lib/game_state'
-require_relative 'shared/default_castling'
-require_relative 'shared/default_castling_partner'
-require_relative 'shared/default_check'
-require_relative 'shared/default_en_passant'
 require_relative 'shared/piece_custom_matchers'
 
 describe Bishop do
@@ -42,18 +38,10 @@ describe Bishop do
   end
 
   describe "#notation_letter" do
-    it 'returns Q' do
+    it 'returns B' do
       actual = bishop.notation_letter
       expect(actual).to eq('B')
     end
-  end
-
-  # Bishop has no special behaviors
-  context "when #{described_class.name} implements default behaviors" do
-    include_examples 'default castling behavior'
-    include_examples 'default castling partner behavior'
-    include_examples 'default check behavior'
-    include_examples 'default en passant behavior'
   end
 
   describe "#actions" do
@@ -65,7 +53,7 @@ describe Bishop do
   
       context 'when the only piece' do
         before(:all) do
-          @game_state = GameState.new([bishop_at_c4])
+          @game_state = GameState.new(pieces: [bishop_at_c4])
           @bishop_actions = bishop_at_c4.actions(@game_state)
         end
         
@@ -124,7 +112,7 @@ describe Bishop do
 
         context "when friendlies at #{friendly_positions.join(', ')}" do
           before(:all) do
-            @game_state = GameState.new([bishop_at_c4])
+            @game_state = GameState.new(pieces: [bishop_at_c4])
 
             friendly_positions.each do |position|
               @game_state.add_piece(ChessPiece.new(position: Position.new(position), owner: friendly_owner))
@@ -161,7 +149,7 @@ describe Bishop do
 
         context "when enemies at #{enemy_positions.join(', ')}" do
           before(:all) do
-            @game_state = GameState.new([bishop_at_c4])
+            @game_state = GameState.new(pieces: [bishop_at_c4])
 
             enemy_positions.each do |position|
               @game_state.add_piece(ChessPiece.new(position: Position.new(position), owner: enemy_owner))
