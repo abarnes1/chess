@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative 'action'
-require 'pry-byebug'
 
 # A chess move that allows pawns to capture other pawns that
 # move past their capturable positions on the previous turn.
@@ -19,7 +18,6 @@ class EnPassant < Action
   def self.create_for(piece, game_state)
     return nil if game_state.nil? || !valid_initiator?(piece)
 
-    # binding.pry
     target_position = game_state.active_en_passant_target
 
     return nil if target_position.nil?
@@ -72,7 +70,6 @@ class EnPassant < Action
                            Offset.new([1, 0])
                          end
 
-      # puts path_from_offset(piece.position, offset_from_pawn)[0]
       path_from_offset(piece.position, offset_from_pawn)[0]
     end
 
