@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'action'
+
 # A basic chess move where one piece moves from its current
 # square to another square occupied by an enemy piece.
 class Capture < Action
