@@ -2,10 +2,6 @@
 
 require_relative '../../lib/pieces/white_pawn'
 require_relative '../../lib/game_state'
-require_relative 'shared/default_castling'
-require_relative 'shared/default_castling_partner'
-require_relative 'shared/default_check'
-require_relative 'shared/default_en_passant'
 require_relative 'shared/piece_custom_matchers'
 
 describe WhitePawn do
@@ -56,12 +52,6 @@ describe WhitePawn do
       expect(actual).to eq('P')
     end
   end
-  
-  context "when #{described_class.name} implements default behaviors" do
-    include_examples 'default castling behavior'
-    include_examples 'default castling partner behavior'
-    include_examples 'default check behavior'
-  end
 
   describe "#actions" do
     context 'when on a2' do
@@ -72,7 +62,7 @@ describe WhitePawn do
   
       context 'when the only piece' do
         before(:all) do
-          @game_state = GameState.new([white_pawn_at_a2])
+          @game_state = GameState.new(pieces: [white_pawn_at_a2])
           @white_pawn_actions = white_pawn_at_a2.actions(@game_state)
         end
         
@@ -95,7 +85,7 @@ describe WhitePawn do
 
         context "when friendlies at #{friendly_positions.join(', ')}" do
           before(:all) do
-            @game_state = GameState.new([white_pawn_at_a2])
+            @game_state = GameState.new(pieces: [white_pawn_at_a2])
 
             friendly_positions.each do |position|
               @game_state.add_piece(ChessPiece.new(position: Position.new(position), owner: friendly_owner))
@@ -120,7 +110,7 @@ describe WhitePawn do
 
         context "when enemy at #{enemy_positions.join(', ')}" do
           before(:all) do
-            @game_state = GameState.new([white_pawn_at_a2])
+            @game_state = GameState.new(pieces: [white_pawn_at_a2])
 
             enemy_positions.each do |position|
               @game_state.add_piece(ChessPiece.new(position: Position.new(position), owner: enemy_owner))
@@ -154,7 +144,7 @@ describe WhitePawn do
   
       context 'when the only piece' do
         before(:all) do
-          @game_state = GameState.new([white_pawn_at_b3])
+          @game_state = GameState.new(pieces: [white_pawn_at_b3])
           @white_pawn_actions = white_pawn_at_b3.actions(@game_state)
         end
         
@@ -173,7 +163,7 @@ describe WhitePawn do
 
         context "when friendlies at #{friendly_positions.join(', ')}" do
           before(:all) do
-            @game_state = GameState.new([white_pawn_at_b3])
+            @game_state = GameState.new(pieces: [white_pawn_at_b3])
 
             friendly_positions.each do |position|
               @game_state.add_piece(ChessPiece.new(position: Position.new(position), owner: friendly_owner))
@@ -194,7 +184,7 @@ describe WhitePawn do
 
         context "when enemy at #{enemy_positions.join(', ')}" do
           before(:all) do
-            @game_state = GameState.new([white_pawn_at_b3])
+            @game_state = GameState.new(pieces: [white_pawn_at_b3])
 
             enemy_positions.each do |position|
               @game_state.add_piece(ChessPiece.new(position: Position.new(position), owner: enemy_owner))
@@ -220,7 +210,7 @@ describe WhitePawn do
 
         context "when enemies at #{enemy_positions.join(', ')}" do
           before(:all) do
-            @game_state = GameState.new([white_pawn_at_b3])
+            @game_state = GameState.new(pieces: [white_pawn_at_b3])
 
             enemy_positions.each do |position|
               @game_state.add_piece(ChessPiece.new(position: Position.new(position), owner: enemy_owner))
@@ -262,7 +252,7 @@ describe WhitePawn do
   
       context 'when the only piece' do
         before(:all) do
-          @game_state = GameState.new([white_pawn_at_b7])
+          @game_state = GameState.new(pieces: [white_pawn_at_b7])
           @white_pawn_actions = white_pawn_at_b7.actions(@game_state)
         end
         
@@ -286,7 +276,7 @@ describe WhitePawn do
 
         context "when enemies at #{enemy_positions.join(', ')}" do
           before(:all) do
-            @game_state = GameState.new([white_pawn_at_b7])
+            @game_state = GameState.new(pieces: [white_pawn_at_b7])
 
             enemy_positions.each do |position|
               @game_state.add_piece(ChessPiece.new(position: Position.new(position), owner: enemy_owner))
@@ -340,7 +330,7 @@ describe WhitePawn do
         enemy_pawn_position = Position.new('b7')
 
         before(:all) do
-          @game_state = GameState.new([white_pawn_at_c5])
+          @game_state = GameState.new(pieces: [white_pawn_at_c5])
           @enemy_pawn = BlackPawn.new(position: enemy_pawn_position, owner: enemy_owner)
           @game_state.add_piece(@enemy_pawn)
           @enemy_pawn_move = Move.new(@enemy_pawn, @enemy_pawn.position, Position.new('b5'))
@@ -363,7 +353,7 @@ describe WhitePawn do
         enemy_pawn_position = Position.new('d7')
 
         before(:all) do
-          @game_state = GameState.new([white_pawn_at_c5])
+          @game_state = GameState.new(pieces: [white_pawn_at_c5])
           @enemy_pawn = BlackPawn.new(position: enemy_pawn_position, owner: enemy_owner)
           @game_state.add_piece(@enemy_pawn)
           @enemy_pawn_move = Move.new(@enemy_pawn, @enemy_pawn.position, Position.new('d5'))
