@@ -2,10 +2,6 @@
 
 require_relative '../../lib/pieces/rook'
 require_relative '../../lib/game_state'
-require_relative 'shared/default_castling'
-require_relative 'shared/default_castling_partner'
-require_relative 'shared/default_check'
-require_relative 'shared/default_en_passant'
 require_relative 'shared/piece_custom_matchers'
 
 describe Rook do
@@ -47,20 +43,6 @@ describe Rook do
       expect(actual).to eq('R')
     end
   end
-  
-  context "when #{described_class.name} implements default behaviors" do
-    include_examples 'default castling behavior'
-    include_examples 'default check behavior'
-    include_examples 'default en passant behavior'
-  end
-
-  context "when #{described_class.name} has special behavior" do
-    context '#castling_partner?' do
-      it 'returns true' do
-        expect(rook).to be_castling_partner
-      end
-    end
-  end
 
   describe "#actions" do
     context 'when on c4' do
@@ -71,7 +53,7 @@ describe Rook do
   
       context 'when the only piece' do
         before(:all) do
-          @game_state = GameState.new([rook_at_c4])
+          @game_state = GameState.new(pieces: [rook_at_c4])
           @rook_actions = rook_at_c4.actions(@game_state)
         end
         
@@ -142,7 +124,7 @@ describe Rook do
 
         context "when friendlies at #{friendly_positions.join(', ')}" do
           before(:all) do
-            @game_state = GameState.new([rook_at_c4])
+            @game_state = GameState.new(pieces: [rook_at_c4])
 
             friendly_positions.each do |position|
               @game_state.add_piece(ChessPiece.new(position: Position.new(position), owner: friendly_owner))
@@ -187,7 +169,7 @@ describe Rook do
 
         context "when enemies at #{enemy_positions.join(', ')}" do
           before(:all) do
-            @game_state = GameState.new([rook_at_c4])
+            @game_state = GameState.new(pieces: [rook_at_c4])
 
             enemy_positions.each do |position|
               @game_state.add_piece(ChessPiece.new(position: Position.new(position), owner: enemy_owner))
