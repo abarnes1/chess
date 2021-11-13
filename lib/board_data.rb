@@ -16,7 +16,7 @@ class BoardData
     @white_player = white
     @black_player = black
 
-    pieces&.each { |piece| add_piece(piece) } unless pieces.empty?
+    pieces&.each { |piece| add_piece(piece) } unless pieces.nil?
   end
 
   def add_piece(piece)
