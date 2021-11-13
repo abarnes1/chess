@@ -28,14 +28,14 @@ class GameState
 
   attr_reader :active_player, :white_player, :black_player, :full_move_counter, :castling_rights, :en_passant_target
 
-  def initialize(pieces: [], white: 'white', black: 'black', board_data: nil)
+  def initialize(pieces: [], white: 'white', black: 'black')
     @white_player = white
     @black_player = black
     @active_player = @white_player
     @white_legal_moves = nil
     @black_legal_moves = nil
 
-    @board_data = board_data.nil? ? BoardData.new(pieces: pieces, white: white, black: black) : board_data
+    @board_data = BoardData.new(pieces: pieces, white: white, black: black)
     @castling_rights = CastlingRights.new(white: white, black: black)
     @en_passant_target = EnPassantTarget.new
     @half_move_clock = HalfMoveClock.new
