@@ -2,10 +2,6 @@
 
 require_relative '../../lib/pieces/knight'
 require_relative '../../lib/game_state'
-require_relative 'shared/default_castling'
-require_relative 'shared/default_castling_partner'
-require_relative 'shared/default_check'
-require_relative 'shared/default_en_passant'
 require_relative 'shared/piece_custom_matchers'
 
 describe Knight do
@@ -56,14 +52,6 @@ describe Knight do
     end
   end
 
-  # Knight has no special behaviors
-  context "when #{described_class.name} implements default behaviors" do
-    include_examples 'default castling behavior'
-    include_examples 'default castling partner behavior'
-    include_examples 'default check behavior'
-    include_examples 'default en passant behavior'
-  end
-
   describe "#actions" do
     context 'when on c4' do
       knight_position = Position.new('c4')
@@ -73,7 +61,7 @@ describe Knight do
   
       context 'when the only piece' do
         before(:all) do
-          @game_state = GameState.new([knight_at_c4])
+          @game_state = GameState.new(pieces: [knight_at_c4])
           @knight_actions = knight_at_c4.actions(@game_state)
         end
         
@@ -120,7 +108,7 @@ describe Knight do
 
         context "when friendlies at #{friendly_positions.join(', ')}" do
           before(:all) do
-            @game_state = GameState.new([knight_at_c4])
+            @game_state = GameState.new(pieces: [knight_at_c4])
 
             friendly_positions.each do |position|
               @game_state.add_piece(ChessPiece.new(position: Position.new(position), owner: friendly_owner))
@@ -157,7 +145,7 @@ describe Knight do
 
         context "when enemies at #{enemy_positions.join(', ')}" do
           before(:all) do
-            @game_state = GameState.new([knight_at_c4])
+            @game_state = GameState.new(pieces: [knight_at_c4])
 
             enemy_positions.each do |position|
               @game_state.add_piece(ChessPiece.new(position: Position.new(position), owner: enemy_owner))
