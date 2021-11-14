@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'position'
+
 # King and rook pair used to track when castling is available.
 class CastlingPair
   attr_reader :king_position, :rook_position
