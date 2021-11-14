@@ -1,7 +1,7 @@
 require_relative '../lib/position'
 
 describe Position do
-  context '#initialize' do
+  describe '#initialize' do
     subject(:position) { described_class.new('A1') }
 
     it 'downcases file (column)' do
@@ -20,7 +20,7 @@ describe Position do
     end
   end
 
-  context '#==' do
+  describe '#==' do
     subject(:first_position) { described_class.new('a1') }
     let(:second_position) { double(Position) }
 
@@ -39,7 +39,7 @@ describe Position do
     end
   end
 
-  context '#inbounds?' do
+  describe '#inbounds?' do
     subject(:position) { described_class.new('a1') }
 
     it 'is false when file not between a and h' do
@@ -56,6 +56,34 @@ describe Position do
 
     it 'is true when rank and file in range' do
       expect(position).to  be_inbounds
+    end
+  end
+
+  describe '#white_square?' do
+    it 'returns true for a white square position' do
+      white_position = Position.new('a2')
+
+      expect(white_position).to be_white_square
+    end
+
+    it 'returns true for a black square position' do
+      black_position = Position.new('a1')
+
+      expect(black_position).not_to be_white_square
+    end
+  end
+
+  describe '#black_square?' do
+    it 'returns true for a black square position' do
+      black_position = Position.new('a1')
+
+      expect(black_position).to be_black_square
+    end
+
+    it 'returns false for a white square position' do
+      white_position = Position.new('a2')
+
+      expect(white_position).not_to be_black_square
     end
   end
 end
