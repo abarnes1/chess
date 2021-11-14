@@ -8,7 +8,6 @@ require_relative 'castling_rights'
 require_relative 'en_passant_target'
 require_relative 'half_move_clock'
 require_relative 'repetition_log'
-require_relative 'forsythe_edwards_notation'
 
 require_relative 'pieces/bishop'
 require_relative 'pieces/rook'
@@ -24,7 +23,6 @@ require_relative 'pieces/queen'
 # creation without adding a bunch of methods to the Action class(es).
 class GameState
   include Positioning
-  include ForsytheEdwardsNotation
 
   attr_reader :active_player, :white_player, :black_player, :full_move_counter, :castling_rights, :en_passant_target
 
@@ -123,7 +121,7 @@ class GameState
 
     @active_player = @active_player == @white_player ? @black_player : @white_player
 
-    @repetition_log.update(repetition_fen)
+    @repetition_log.update(repetition_string)
 
     @white_legal_moves = nil
     @black_legal_moves = nil
@@ -131,6 +129,8 @@ class GameState
 
   def legal_move?(player, move)
     king = @board_data.find_king(player)
+    return true if king.nil?
+
     move.apply(@board_data)
 
     legal = !under_threat?(king)
@@ -155,6 +155,28 @@ class GameState
 
   def repetitions
     @repetition_log.repetitions
+  end
+
+  def full_fen
+    values = []
+    values << board_data.to_fen_component
+    values << active_player_fen
+    values << castling_rights.to_fen_component
+    values << en_passant_target.to_fen_component
+    values << half_move_clock
+    values << full_move_counter
+
+    values.join(' ')
+  end
+
+  def repetition_string
+    values = []
+    values << board_data.to_fen_component
+    values << active_player_fen
+    values << castling_rights.to_fen_component
+    values << en_passant_target.to_fen_component
+
+    values.join(' ')
   end
 
   private
@@ -190,5 +212,9 @@ class GameState
 
       legal_moves
     end
+  end
+
+  def active_player_fen
+    active_player == white_player ? 'w' : 'b'
   end
 end
