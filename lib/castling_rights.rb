@@ -18,8 +18,10 @@ class CastlingRights
   def player_pairs(player)
     if player == @white
       [@white_king_side, @white_queen_side]
-    else
+    elsif player == @black
       [@black_king_side, @black_queen_side]
+    else
+      []
     end
   end
 
