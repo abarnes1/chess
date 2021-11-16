@@ -24,7 +24,9 @@ require_relative 'pieces/queen'
 class GameState
   include Positioning
 
-  attr_reader :active_player, :white_player, :black_player, :full_move_counter, :castling_rights, :en_passant_target
+  attr_reader :active_player, :white_player, :black_player, :full_move_counter, :castling_rights,
+              :en_passant_target, :last_move
+
 
   def initialize(pieces: [], white: 'white', black: 'black')
     @white_player = white
@@ -32,6 +34,7 @@ class GameState
     @active_player = @white_player
     @white_legal_moves = nil
     @black_legal_moves = nil
+    @last_move = nil
 
     @board_data = BoardData.new(pieces: pieces, white: white, black: black)
     @castling_rights = CastlingRights.new(white: white, black: black)
@@ -125,6 +128,7 @@ class GameState
 
     @white_legal_moves = nil
     @black_legal_moves = nil
+    @last_move = action.notation
   end
 
   def legal_move?(player, move)
