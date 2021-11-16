@@ -34,19 +34,34 @@ class TerminalUI
     puts message
   end
 
-  def display_turn_start(player, in_check)
-    system('clear')
-    display_chessboard
-    puts in_check ? "#{player.name}'s turn. You're in check!" : "#{player.name}'s turn."
-    print "Enter save, quit, or select a piece's location: "
+  def display_turn_prompt
+    print 'Enter save, quit, a piece (a2), or a move (a2a4): '
   end
 
-  def player_turn_input
+  def display_destination_prompt
+    print 'Enter the destination square: '
+  end
+
+  def display_game_state(player, game_state)
+    system('clear')
+    display_chessboard
+    puts game_state.in_check?(player) ? "#{player.name}'s turn. You're in check!" : "#{player.name}'s turn."
+  end
+
+  def player_input
     gets.chomp.downcase
   end
 
   def display_invalid_selection
-    print "That's not valid... try again: "
+    puts "\e[31mThat's not valid... try again.\e[0m"
+  end
+
+  def highlight_actions(actions)
+    chessboard.highlight_actions(actions)
+  end
+
+  def clear_highlights
+    chessboard.clear_highlights
   end
 
   private
