@@ -75,6 +75,10 @@ class Chessboard
     end
   end
 
+  def clear_highlights
+    squares.each(&:clear_bg_highlight)
+  end
+
   def reset_squares
     squares.each do |square|
       square.clear_piece
