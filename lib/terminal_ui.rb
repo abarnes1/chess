@@ -56,6 +56,10 @@ class TerminalUI
     puts "\e[31mThat's not valid... try again.\e[0m"
   end
 
+  def display_game_quit
+    puts 'Quitting... Thanks for playing!'
+  end
+
   def highlight_actions(actions)
     chessboard.highlight_actions(actions)
   end

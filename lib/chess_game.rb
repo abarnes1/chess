@@ -102,6 +102,19 @@ class ChessGame
     game_end.ending?
   end
 
+  def save_game
+    
+  end
+
+  def load_game
+
+  end
+
+  def quit_game
+    ui.display_game_quit
+    exit
+  end
+
   private
 
   def play_computer_turn(player)
