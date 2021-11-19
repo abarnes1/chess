@@ -7,9 +7,10 @@ require_relative 'action'
 class Promote < Action
   attr_accessor :promote_to
 
-  def initialize(piece, move_to, promote_to = nil)
+  def initialize(piece, move_from, move_to, promote_to = nil)
     super
     @piece = piece
+    @move_from = move_from
     @promote_to = promote_to.nil? ? Queen.new(owner: piece.owner) : promote_to
     @move_to = move_to
   end
@@ -25,7 +26,8 @@ class Promote < Action
     valid_positions.each do |position|
       break if game_state.occupied_at?(position)
 
-      move = new(piece, position) if piece.can_promote_at?(position)
+      # move = new(piece, position) if piece.can_promote_at?(position)
+      move = new(piece, piece.position, position) if piece.can_promote_at?(position)
 
       moves << move
     end
