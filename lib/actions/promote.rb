@@ -26,7 +26,6 @@ class Promote < Action
     valid_positions.each do |position|
       break if game_state.occupied_at?(position)
 
-      # move = new(piece, position) if piece.can_promote_at?(position)
       move = new(piece, piece.position, position) if piece.can_promote_at?(position)
 
       moves << move
