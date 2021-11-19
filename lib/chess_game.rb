@@ -8,9 +8,14 @@ require_relative 'pieces/piece_sets'
 
 require_relative 'display/chessboard'
 require_relative 'terminal_ui'
+require_relative 'save_manager'
+
+require 'pry-byebug'
 
 # Logic to setup, start, allow moves, and end a game of chess.
 class ChessGame
+  SAVE_FOLDER = 'saves'.freeze
+
   include PieceSets
 
   attr_reader :game_over, :ui
@@ -29,7 +34,6 @@ class ChessGame
     @game_state = nil
     @current_player = nil
     @winner = nil
-    @turn_counter = 0
     @game_end = GameEnding.new
 
     @ui = TerminalUI.new
@@ -46,15 +50,18 @@ class ChessGame
   end
 
   def setup_game
-    # new game or load here
-    # create players
-    @white = create_player('white', Colors::CYAN)
-    @black = create_player('black', Colors::BRIGHT_MAGENTA)
+    ui.display_main_menu
+    choice = ui.get_main_menu_choice
 
-    self.current_player = white
+    load_game if choice == '2'
 
-    @game_state = GameState.new(white: white, black: black)
-    standard_piece_setup(game_state)
+    if @game_state.nil?
+      create_new_game
+    else
+      @white = @game_state.white_player
+      @black = @game_state.black_player
+      @current_player = @game_state.active_player
+    end
   end
 
   def create_player(label, color)
@@ -103,11 +110,30 @@ class ChessGame
   end
 
   def save_game
-    
+    data_manager = SaveManager.new(SAVE_FOLDER)
+
+    filename = Time.now.strftime('%Y-%d-%m_%H-%M-%S')
+    ui.display_saving(filename)
+    data_manager.save_game(@game_state, filename)
+
+    quit_game
   end
 
   def load_game
+    data_manager = SaveManager.new(SAVE_FOLDER)
 
+    saves = data_manager.saves_list
+
+    if saves.empty?
+      ui.display_no_saves
+    else
+      ui.display_saves(saves)
+      save_file = ui.player_input
+
+      return if save_file.nil? || save_file.strip.empty?
+
+      @game_state = data_manager.load_game(save_file)
+    end
   end
 
   def quit_game
@@ -116,6 +142,16 @@ class ChessGame
   end
 
   private
+
+  def create_new_game
+    @white = create_player('white', Colors::CYAN)
+    @black = create_player('black', Colors::BRIGHT_MAGENTA)
+
+    self.current_player = white
+
+    @game_state = GameState.new(white: white, black: black)
+    standard_piece_setup(game_state)
+  end
 
   def play_computer_turn(player)
     moves = game_state.legal_moves(player)

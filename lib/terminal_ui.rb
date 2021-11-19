@@ -1,4 +1,5 @@
 require_relative 'display/chessboard'
+require 'pry-byebug'
 
 class TerminalUI
   def initialize
@@ -28,6 +29,18 @@ class TerminalUI
     player_class
   end
 
+  def get_main_menu_choice
+    save_load_choice = player_input
+
+    until %(1 2).include?(save_load_choice)
+      display_invalid_selection
+      display_main_menu
+      save_load_choice = player_input
+    end
+
+    save_load_choice
+  end
+
   def display_game_end(message)
     system('clear')
     display_chessboard
@@ -54,6 +67,20 @@ class TerminalUI
 
   def display_invalid_selection
     puts "\e[31mThat's not valid... try again.\e[0m"
+  end
+
+  def display_main_menu
+    print 'Enter 1 to start a new game or 2 to load a saved game: '
+  end
+
+  def display_saves(saves)
+    puts 'Listing saved games: '
+    puts saves.compact
+    print 'Select a filename to load or nothing to create a new game: '
+  end
+
+  def display_saving(filename)
+    puts "Saving your game in file: #{filename}"
   end
 
   def display_game_quit
