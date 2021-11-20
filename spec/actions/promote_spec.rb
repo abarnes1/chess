@@ -71,8 +71,8 @@ describe Promote do
   describe '#to_s' do
     let(:move_from) { Position.new('a7') }
     let(:move_to) { Position.new('a8') }
-    let(:promotable) { double('promotable', to_s: 'x') }
-    let(:promote_to) { double('promote_to', to_s: 'y') }
+    let(:promotable) { double('promotable', to_s: 'piece1') }
+    let(:promote_to) { double('promote_to', to_s: 'piece2') }
 
     subject(:promote) { described_class.new(promotable, move_from, move_to, promote_to) }
 
@@ -87,8 +87,8 @@ describe Promote do
   describe '#notation' do
     let(:move_from) { Position.new('a7') }
     let(:move_to) { Position.new('a8') }
-    let(:promotable) { double('promotable', to_s: 'x') }
-    let(:promote_to) { double('promote_to', to_s: 'y') }
+    let(:promotable) { double('promotable', to_s: 'piece1') }
+    let(:promote_to) { double('promote_to', to_s: 'piece2') }
 
     subject(:promote) { described_class.new(promotable, move_from, move_to, promote_to) }
 

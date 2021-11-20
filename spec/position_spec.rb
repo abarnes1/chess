@@ -66,7 +66,7 @@ describe Position do
       expect(white_position).to be_white_square
     end
 
-    it 'returns true for a black square position' do
+    it 'returns false for a black square position' do
       black_position = Position.new('a1')
 
       expect(black_position).not_to be_white_square

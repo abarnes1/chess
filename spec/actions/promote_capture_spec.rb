@@ -90,9 +90,9 @@ describe PromoteCapture do
     let(:move_from) { Position.new('a7') }
     let(:move_to) { Position.new('a8') }
     let(:game_state) { double('game_state') }
-    let(:promotable) { double('promotable', to_s: 'x') }
-    let(:captured) { double('captured', to_s: '1') }
-    let(:promote_to) { double('promote_to', to_s: 'y') }
+    let(:promotable) { double('promotable', to_s: 'piece1') }
+    let(:captured) { double('captured', to_s: 'captured') }
+    let(:promote_to) { double('promote_to', to_s: 'piece2') }
 
     subject(:promote_capture) { described_class.new(promotable, move_from, move_to, captured, promote_to) }
 
@@ -108,9 +108,9 @@ describe PromoteCapture do
     let(:move_from) { Position.new('a7') }
     let(:move_to) { Position.new('a8') }
     let(:game_state) { double('game_state') }
-    let(:promotable) { double('promotable', to_s: 'x') }
-    let(:captured) { double('captured', to_s: '1') }
-    let(:promote_to) { double('promote_to', to_s: 'y') }
+    let(:promotable) { double('promotable', to_s: 'piece1') }
+    let(:captured) { double('captured', to_s: 'captured') }
+    let(:promote_to) { double('promote_to', to_s: 'piece2') }
 
     subject(:promote_capture) { described_class.new(promotable, move_from, move_to, captured, promote_to) }
 
