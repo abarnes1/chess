@@ -11,7 +11,7 @@ class HalfMoveClock
   end
 
   def update(action)
-    if  capture?(action) || pawn_move?(action)
+    if capture?(action) || pawn_move?(action)
       @counter = 0
     else
       @counter += 1
