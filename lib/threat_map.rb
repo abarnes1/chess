@@ -1,22 +1,16 @@
 # frozen_string_literal: true
 
 require_relative 'modules/positioning'
-require_relative 'game_state'
 
-# Represents all attackable squares that the opposing player
-# can attack on their next turn.  Used to prevent the current
-# player from moving its king to an attackable position.
+# Represents all attackable squares that a player can attack on their next
+# turn. Used to detect landing spots where the enemy king can't land because
+# it would put itself in check.  Includes all empty attackable squares and
+# squares that are attackable by at least one piece in the event of a capture.
 class ThreatMap
   include Positioning
 
   def initialize(pieces)
-    @pieces = pieces
-  end
-
-  # needs a reference to pieces and
-  # a way to find the enemy pieces
-  def referenced_pieces(pieces)
-    @referenced_pieces = pieces
+    @all_pieces = pieces
   end
 
   def calculate(pieces)
@@ -47,12 +41,16 @@ class ThreatMap
       path.each do |position|
         break if covered
 
-        threat_map << position
+        threat_map << position unless already_threatened?(threat_map, position)
 
-        covered = true if @pieces.any? { |piece| piece.position == position }
+        covered = true if @all_pieces.any? { |piece| piece.position == position }
       end
     end
 
     threat_map
+  end
+
+  def already_threatened?(threatened_position, position)
+    threatened_position.any? { |pos| pos == position }
   end
 end
