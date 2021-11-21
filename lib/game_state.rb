@@ -145,7 +145,7 @@ class GameState
   end
 
   def under_threat?(piece)
-    enemy = piece.owner == @white_player ? @black_player : @white_player
+    enemy = opposing_player(piece.owner)
     enemy_pieces = player_pieces(enemy)
 
     threat_map = calc_threat_map(enemy_pieces)
