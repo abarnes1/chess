@@ -112,7 +112,7 @@ class GameState
 
   def in_check?(player)
     king = @board_data.find_king(player)
-    under_threat?(king)
+    under_threat?(king.position, king.owner)
   end
 
   def apply_action(action)
@@ -137,20 +137,21 @@ class GameState
 
     move.apply(@board_data)
 
-    legal = !under_threat?(king)
+    legal = !under_threat?(king.position, king.owner)
 
     move.undo(@board_data)
 
+    puts "#{move} legal? #{legal}"
     legal
   end
 
-  def under_threat?(piece)
-    enemy = opposing_player(piece.owner)
+  def under_threat?(position, player)
+    enemy = opposing_player(player)
     enemy_pieces = player_pieces(enemy)
 
     threat_map = calc_threat_map(enemy_pieces)
 
-    threat_map.include?(piece.position)
+    threat_map.include?(position)
   end
 
   def opposing_player(player = current_player)

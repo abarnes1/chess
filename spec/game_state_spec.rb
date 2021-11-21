@@ -220,7 +220,7 @@ describe GameState do
       end
 
       it 'returns true' do
-        actual = game_state.under_threat?(threatened_piece)
+        actual = game_state.under_threat?(threatened_piece.position, threatened_piece.owner)
 
         expect(actual).to be true
       end
@@ -236,7 +236,7 @@ describe GameState do
       end
 
       it 'returns true' do
-        actual = game_state.under_threat?(not_threatened_piece)
+        actual = game_state.under_threat?(not_threatened_piece.position, not_threatened_piece.owner)
 
         expect(actual).to be false
       end

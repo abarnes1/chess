@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'action'
+require 'pry-byebug'
 
 # Castling chess action between a piece that
 # initiates castling and a partner piece.
@@ -83,8 +84,8 @@ class Castling < Action
 
     def rook_destination(king, rook)
       x_direction = left_castle?(king, rook) ? 3 : -2
-
       offset = Offset.new([x_direction, 0])
+
       path_from_offset(rook.position, offset)[0]
     end
 
@@ -109,7 +110,7 @@ class Castling < Action
       destination = king_destination(king, rook)
       path = linear_path_from_positions(king.position, destination)
 
-      path.any? { |position| game_state.under_threat?(king) }
+      path.any? { |position| game_state.under_threat?(position, king.owner) }
     end
   end
 end

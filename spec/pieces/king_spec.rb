@@ -198,7 +198,6 @@ describe King do
           end
         end
       end
-     
     end
 
     context 'when on e1' do
@@ -234,6 +233,29 @@ describe King do
             it 'can castle to g1' do
               expect(@king_actions).to be_available_castling(Position.new('g1'))
             end
+          end
+        end
+
+        context 'when castling path is attackable' do
+          let(:white_player) { 'white_player' }
+          let(:black_player) { 'black_player' }
+          let(:game_state) { GameState.new(white: white_player, black: black_player) }
+
+          let(:rook) { Rook.new(position: Position.new('h1'), owner: white_player) }
+          subject(:king) { described_class.new(position: Position.new('e1'), owner: white_player) }
+
+          before do
+            game_state.add_piece(rook)
+            game_state.add_piece(king)
+
+            game_state.add_piece(Rook.new(position: Position.new('f3'), owner: black_player))
+          end
+
+          it 'has no castling actions' do
+            king_actions = king.actions(game_state)
+            actual = king_actions.select{ |action| action.instance_of?(Castling)}.size
+
+            expect(actual).to eq(0)
           end
         end
       end
