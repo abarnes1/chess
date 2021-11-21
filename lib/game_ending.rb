@@ -1,5 +1,7 @@
 require_relative 'game_state'
 
+# Represents the possible game outcomes given the state of a chess
+# game.  Includes only endings that would be forced in a normal game.
 class GameEnding
   def initialize
     @message = nil
@@ -29,8 +31,10 @@ class GameEnding
   private
 
   def checkmated?(player, move_count, game_state)
+    return unless move_count.zero? && game_state.in_check?(player)
+
     @winner = game_state.opposing_player(player)
-    @message = "#{winner.name} wins by checkmate!" if move_count.zero? && game_state.in_check?(player)
+    @message = "#{winner.name} wins by checkmate!"
   end
 
   def stalemate?(player, move_count, game_state)
@@ -38,7 +42,7 @@ class GameEnding
   end
 
   def half_move_clock?(half_move_clock)
-    @message = 'Draw by 75 move rule' if half_move_clock > 75
+    @message = 'Draw by 75 move rule' if half_move_clock >= 75
   end
 
   def king_vs_king?(game_state)
@@ -60,7 +64,7 @@ class GameEnding
 
     if (only_king?(pieces) && only_king_bishop?(other_pieces)) ||
        (only_king?(other_pieces) && only_king_bishop?(pieces))
-      @message = 'Draw due to dead position (K vs. KB)' 
+      @message = 'Draw due to dead position (K vs. KB)'
     end
   end
 
@@ -73,7 +77,7 @@ class GameEnding
 
     if (only_king?(pieces) && only_king_knight?(other_pieces)) ||
        (only_king?(other_pieces) && only_king_knight?(pieces))
-      @message = 'Draw due to dead position (K vs. KN)' 
+      @message = 'Draw due to dead position (K vs. KN)'
     end
   end
 
@@ -84,15 +88,14 @@ class GameEnding
     pieces = game_state.player_pieces(player)
     other_pieces = game_state.player_pieces(other_player)
 
-    if (only_king_bishop?(pieces) && only_king_bishop?(other_pieces))
-      bishop_one = find_bishop(pieces)
-      bishop_two = find_bishop(other_pieces)
+    return unless only_king_bishop?(pieces) && only_king_bishop?(other_pieces)
 
-      if (bishop_one.position.white_square? && bishop_two.position.white_square?) ||
-         (bishop_one.position.black_square? && bishop_two.position.black_square?)
-          @message = 'Draw due to dead position (KB vs. KB, same color B)' 
-      end
-    end
+    bishop_one = find_bishop(pieces)
+    bishop_two = find_bishop(other_pieces)
+
+    return unless on_same_color?(bishop_one.position, bishop_two.position)
+
+    @message = 'Draw due to dead position (KB vs. KB, same color B)'
   end
 
   def only_king_bishop?(pieces)
@@ -118,10 +121,15 @@ class GameEnding
   end
 
   def find_bishop(pieces)
-    bishop = pieces.find { |piece| piece.instance_of?(Bishop)}
+    pieces.find { |piece| piece.instance_of?(Bishop) }
   end
 
   def five_fold_repetition?(game_state)
-    @message = 'Draw by five-fold repetition.' if game_state.repetitions >= 5
+    @message = 'Draw by five-fold repetition' if game_state.repetitions >= 5
+  end
+
+  def on_same_color?(position_one, position_two)
+    (position_one.white_square? && position_two.white_square?) ||
+      (position_one.black_square? && position_two.black_square?)
   end
 end
