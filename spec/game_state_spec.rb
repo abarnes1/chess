@@ -209,6 +209,40 @@ describe GameState do
     end
   end
 
+  describe '#under_threat?' do
+    context 'when piece under threat' do
+      subject(:game_state) { described_class.new(white: white_player, black: black_player) }
+      let(:threatened_piece) { King.new(position: Position.new('a1'), owner: white_player) }
+
+      before do
+        game_state.add_piece(threatened_piece)
+        game_state.add_piece(Rook.new(position: Position.new('a4'), owner: black_player))
+      end
+
+      it 'returns true' do
+        actual = game_state.under_threat?(threatened_piece)
+
+        expect(actual).to be true
+      end
+    end
+
+    context 'when piece not under threat' do
+      subject(:game_state) { described_class.new(white: white_player, black: black_player) }
+      let(:not_threatened_piece) { King.new(position: Position.new('c3'), owner: white_player) }
+
+      before do
+        game_state.add_piece(not_threatened_piece)
+        game_state.add_piece(Rook.new(position: Position.new('a4'), owner: black_player))
+      end
+
+      it 'returns true' do
+        actual = game_state.under_threat?(not_threatened_piece)
+
+        expect(actual).to be false
+      end
+    end
+  end
+
   describe '#opposing_player' do
     subject(:game_state) { described_class.new(white: white_player, black: black_player) }
       
