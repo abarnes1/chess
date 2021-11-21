@@ -23,7 +23,6 @@ describe ThreatMap do
     
         it 'returns the correct number of threatened positions' do
           actual = threat_map.calculate(black_pieces).size
-          puts threat_map.calculate(black_pieces)
           
           expect(actual).to eq(10)
         end
