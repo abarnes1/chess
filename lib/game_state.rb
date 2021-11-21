@@ -141,7 +141,6 @@ class GameState
 
     move.undo(@board_data)
 
-    puts "#{move} legal? #{legal}"
     legal
   end
 
