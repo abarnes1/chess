@@ -4,7 +4,7 @@ require_relative 'computer_player'
 require_relative 'game_state'
 require_relative 'game_ending'
 
-require_relative 'pieces/piece_sets'
+require_relative 'modules/piece_sets'
 
 require_relative 'display/chessboard'
 require_relative 'terminal_ui'
