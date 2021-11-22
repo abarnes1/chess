@@ -8,8 +8,6 @@ require_relative 'color_scheme'
 class Chessboard
   include ColorScheme
 
-  attr_reader :primary_background_color, :secondary_background_color
-
   def initialize
     @squares = nil
   end
@@ -18,6 +16,10 @@ class Chessboard
     initialize_squares if @squares.nil?
 
     @squares
+  end
+
+  def colorable_items
+    squares
   end
 
   def display
@@ -88,8 +90,6 @@ class Chessboard
 
   private
 
-  def displayable_rank(rank) end
-
   def piece_color(owner)
     if owner.respond_to?(:color)
       owner.color
@@ -118,10 +118,5 @@ class Chessboard
   def default_background_color(position)
     position_value = (position.file.ord + position.rank.to_i) % 2
     position_value.zero? ? default_primary_background_color : default_secondary_background_color
-  end
-
-  def update_square_default_background(old_color, new_color)
-    to_update = squares.select { |square| square.bg_color == old_color }
-    to_update.each { |square| square.bg_color = new_color }
   end
 end

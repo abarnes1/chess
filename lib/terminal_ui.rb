@@ -98,6 +98,18 @@ class TerminalUI
     chessboard.clear_highlights
   end
 
+  def party_time(player, game_state)
+    20.times do
+      @chessboard.randomize_background_colors
+      display_game_state(player, game_state)
+      puts "It's party time y'all!"
+      sleep(0.25)
+    end
+
+    @chessboard.reset_color_scheme
+    display_game_state(player, game_state)
+  end
+
   private
 
   attr_reader :chessboard

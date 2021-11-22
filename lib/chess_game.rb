@@ -174,6 +174,8 @@ class ChessGame
     quit_game if input == 'quit'
 
     until valid_turn_selection(input, moves)
+      ui.party_time(player, game_state) if input == 'party time'
+
       if valid_piece_selection(input, moves)
         piece_moves = piece_moves(input, moves)
 
@@ -188,7 +190,7 @@ class ChessGame
 
       ui.clear_highlights
       ui.display_game_state(player, game_state)
-      ui.display_invalid_selection
+      ui.display_invalid_selection unless input == 'party time'
       ui.display_turn_prompt
       input = ui.player_input
     end

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-# Determines highlight color for Action classes.
+# Determines colors to display on a Chessboard.
 module ColorScheme
-  attr_reader :primary_background_color, :secondary_background_color
+  attr_reader :primary_background_color, :secondary_background_color, :colorable_items
 
   def primary_background_color=(color)
     return if color == @secondary_background_color
@@ -24,6 +24,21 @@ module ColorScheme
 
   def default_secondary_background_color
     Colors::BG_BRIGHT_GRAY
+  end
+
+  def randomize_background_colors
+    self.primary_background_color = Colors.random_background
+    self.secondary_background_color = Colors.random_background
+  end
+
+  def reset_color_scheme
+    self.primary_background_color = default_primary_background_color
+    self.secondary_background_color = default_secondary_background_color
+  end
+
+  def update_square_default_background(old_color, new_color)
+    to_update = colorable_items.select { |item| item.bg_color == old_color }
+    to_update.each { |item| item.bg_color = new_color }
   end
 
   # rubocop: disable Metrics/MethodLength
