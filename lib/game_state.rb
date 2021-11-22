@@ -27,7 +27,6 @@ class GameState
   attr_reader :active_player, :white_player, :black_player, :full_move_counter, :castling_rights,
               :en_passant_target, :last_move
 
-
   def initialize(pieces: [], white: 'white', black: 'black')
     @white_player = white
     @black_player = black

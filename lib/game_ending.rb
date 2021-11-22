@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'game_state'
 
 # Represents the possible game outcomes given the state of a chess
@@ -117,7 +119,7 @@ class GameEnding
   end
 
   def only_king?(pieces)
-    pieces.size == 1 && pieces.all? { |piece| piece.instance_of?(King)}
+    pieces.size == 1 && pieces.all? { |piece| piece.instance_of?(King) }
   end
 
   def find_bishop(pieces)

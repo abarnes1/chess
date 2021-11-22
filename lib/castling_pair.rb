@@ -18,6 +18,6 @@ class CastlingPair
   end
 
   def update(position_moved_from)
-    @enabled = false if [@king_position, @rook_position].any? { |position| position == position_moved_from}
+    @enabled = false if [@king_position, @rook_position].any? { |position| position == position_moved_from }
   end
 end

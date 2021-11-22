@@ -1,4 +1,8 @@
+# frozen_string_literal: true
+
+# Preset goups of pieces that can be added to the supplied GameState object.
 module PieceSets
+  # rubocop:disable Metrics/AbcSize
   def standard_piece_setup(game_state)
     white = game_state.white_player
     black = game_state.black_player
@@ -39,4 +43,5 @@ module PieceSets
     game_state.add_piece(BlackPawn.new(position: Position.new('g7'), owner: black))
     game_state.add_piece(BlackPawn.new(position: Position.new('h7'), owner: black))
   end
+  # rubocop:enable Metrics/AbcSize
 end

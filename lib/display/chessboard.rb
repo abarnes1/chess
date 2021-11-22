@@ -88,9 +88,7 @@ class Chessboard
 
   private
 
-  def displayable_rank(rank)
-
-  end
+  def displayable_rank(rank) end
 
   def piece_color(owner)
     if owner.respond_to?(:color)

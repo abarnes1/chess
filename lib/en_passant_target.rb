@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 require_relative 'modules/positioning'
 require_relative 'pieces/black_pawn'
 require_relative 'pieces/white_pawn'
 require_relative 'actions/move'
 
+# Tracks the current (if any) position that is capturable via en passant.
 class EnPassantTarget
   include Positioning
 

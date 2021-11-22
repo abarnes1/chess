@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Stores values that identify repetition and reports how many times 
+# Stores values that identify repetition and reports how many times
 # a specific value has been logged.
 class RepetitionLog
   def initialize(log = Hash.new(0))
