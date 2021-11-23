@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 require_relative 'chess_square'
-require_relative '../constants/colors'
 require_relative 'color_scheme'
+
+require_relative '../constants/colors'
+require_relative '../position'
 
 # Visual representation of a classic chessboard.
 class Chessboard
@@ -10,6 +12,9 @@ class Chessboard
 
   def initialize
     @squares = nil
+
+    @primary_background_color = default_primary_background_color
+    @secondary_background_color = default_secondary_background_color
   end
 
   def squares

@@ -3,12 +3,14 @@
 # Color constants for foreground (font) and background colors for
 # Ruby terminal applications.
 class Colors
-  def self.random_foreground
-    ((30..37).to_a + (90..97).to_a).sample.to_s
+  def self.random_foreground(exclusions = [])
+    codes = (30..37).to_a + (90..97).to_a - exclusions
+    codes.sample.to_s
   end
 
-  def self.random_background
-    ((40..47).to_a + (100..107).to_a).sample.to_s
+  def self.random_background(exclusions = [])
+    codes = (40..47).to_a + (100..107).to_a - exclusions.map(&:to_i)
+    codes.sample.to_s
   end
 
   self::BLACK = '30'

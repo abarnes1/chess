@@ -5,17 +5,17 @@ module ColorScheme
   attr_reader :primary_background_color, :secondary_background_color, :colorable_items
 
   def primary_background_color=(color)
-    return if color == @secondary_background_color
-
-    update_square_default_background(@primary_background_color, color)
+    old_color = primary_background_color
     @primary_background_color = color
+
+    update_square_default_background(old_color, primary_background_color)
   end
 
   def secondary_background_color=(color)
-    return if color == @primary_background_color
-
-    update_square_default_background(@secondary_background_color, color)
+    old_color = secondary_background_color
     @secondary_background_color = color
+
+    update_square_default_background(old_color, secondary_background_color)
   end
 
   def default_primary_background_color
@@ -27,8 +27,8 @@ module ColorScheme
   end
 
   def randomize_background_colors
-    self.primary_background_color = Colors.random_background
-    self.secondary_background_color = Colors.random_background
+    self.primary_background_color = Colors.random_background([primary_background_color, secondary_background_color])
+    self.secondary_background_color = Colors.random_background([primary_background_color, secondary_background_color])
   end
 
   def reset_color_scheme
@@ -49,9 +49,9 @@ module ColorScheme
     when Capture
       Colors::BG_RED
     when Promote
-      Colors::BG_BRIGHT_GREEN
+      Colors::BG_GREEN
     when PromoteCapture
-      Colors::BG_MAGENTA
+      Colors::BG_RED
     when EnPassant
       Colors::BG_RED
     when Castling
