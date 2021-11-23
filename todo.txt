@@ -1,7 +1,0 @@
-1. try to update game_state to use internal array of squares instead of a piece array
-  a. easier to generate FEN output
-  b. faster lookups
-  c. may make it necessary for pieces to not know about their position otherwise it is
-     duplicated
-2. figure out where to best put PGN fields
-3. rework castling to use castling pairs instead of overcomplicated math
