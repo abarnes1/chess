@@ -171,9 +171,6 @@ class ChessGame
 
     input = ui.player_input
 
-    save_game if input == 'save'
-    quit_game if input == 'quit'
-
     until valid_turn_selection(input, moves)
       ui.party_time(player, game_state) if input == 'party time'
 
@@ -195,6 +192,9 @@ class ChessGame
       ui.display_turn_prompt
       input = ui.player_input
     end
+
+    save_game if input == 'save'
+    quit_game if input == 'quit'
 
     chosen_move = find_move(input, moves)
 
