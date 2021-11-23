@@ -25,7 +25,7 @@ class TerminalUI
     player_class = nil
 
     until player_class
-      print "Choose a player type for #{description}\nEnter 1 for Human or 2 for Computer: "
+      print "\nChoose a player type for #{description}\nEnter 1 for Human or 2 for Computer: "
       player_class = player_class_lookup(gets.chomp)
     end
 
@@ -35,7 +35,7 @@ class TerminalUI
   def get_main_menu_choice
     save_load_choice = player_input
 
-    until %(1 2).include?(save_load_choice)
+    until %w[1 2].include?(save_load_choice)
       display_invalid_selection
       display_main_menu
       save_load_choice = player_input
@@ -78,8 +78,10 @@ class TerminalUI
 
   def display_saves(saves)
     puts 'Listing saved games: '
-    puts saves.compact
-    print 'Select a filename to load or nothing to create a new game: '
+
+    saves.compact.each_with_index { |save, index| puts "#{index + 1}: #{save}" }
+
+    print 'Select a file number to load or nothing to create a new game: '
   end
 
   def display_saving(filename)
@@ -106,7 +108,7 @@ class TerminalUI
       sleep(0.25)
     end
 
-    @chessboard.reset_color_scheme
+    chessboard.reset_color_scheme
     display_game_state(player, game_state)
   end
 

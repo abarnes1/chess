@@ -130,7 +130,8 @@ class ChessGame
       ui.display_no_saves
     else
       ui.display_saves(saves)
-      save_file = ui.player_input
+
+      save_file = saves[ui.player_input.to_i - 1]
 
       return if save_file.nil? || save_file.strip.empty?
 
