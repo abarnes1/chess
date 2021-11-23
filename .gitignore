@@ -1,2 +1,4 @@
 coverage
-.rubocopy.yml
+test_scripts
+.rubocop.yml
+saves/
