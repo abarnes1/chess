@@ -157,9 +157,9 @@ class ChessGame
   def play_computer_turn(player)
     moves = game_state.legal_moves(player)
 
-    # sleep(2)
     chosen_move = player.choose_action(moves)
     puts "#{chosen_move.move_from}#{chosen_move.move_to}"
+    sleep(2)
 
     @game_state.apply_action(chosen_move)
   end
