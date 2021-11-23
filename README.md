@@ -39,6 +39,7 @@ Planning is important.  Early on I had a limited understanding of some chess rul
 ## Possible Improvements
 If I were to return in the future for modifications I would probably look at:
 
+  - Increase test coverage to 100%.  It currently sits at ~93% as measured by the [simplecov](https://github.com/simplecov-ruby/simplecov) gem.
   - Help menu:  Give a simple explanation of how to play.
   - Menu selection: Using arrows keys to move around a menu instead of having to input 1 or 2 in many cases.
   - Display:  More information on the turn display for half move clock, castling rights, and/or the active en passant target.
