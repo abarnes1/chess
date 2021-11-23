@@ -146,8 +146,8 @@ class ChessGame
   private
 
   def create_new_game
-    @white = create_player('white', Colors::CYAN)
-    @black = create_player('black', Colors::BRIGHT_MAGENTA)
+    @white = create_player('white', Colors::GRAY)
+    @black = create_player('black', Colors::BLACK)
 
     self.current_player = white
 

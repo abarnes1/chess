@@ -19,11 +19,11 @@ module ColorScheme
   end
 
   def default_primary_background_color
-    Colors::BG_BLACK
+    Colors::BG_MAGENTA
   end
 
   def default_secondary_background_color
-    Colors::BG_BRIGHT_GRAY
+    Colors::BG_BRIGHT_BLUE
   end
 
   def randomize_background_colors
