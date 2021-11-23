@@ -5,16 +5,18 @@
 This is a CLI chess game written in Ruby for [The Odin Project](https://www.theodinproject.com/paths/full-stack-ruby-on-rails/courses/ruby-programming/lessons/ruby-final-project).
 
 ## Preview
-
+![Alt text](/demo/game_demo.gif?raw=true "Gameplay Demo")
 
 ## How to Play
-- Clone this repo and run `ruby lib/main.rb`
-- Play online at [repl.it](http://www.google.com)
+- Clone this repo and run `ruby main.rb`
+- Play online at [repl.it](https://replit.com/@abar161/chess)
 ## Features
-### Gameplay
+### Gameplay Includes
+- Checkmate
 - Castling (treated as a King move when playing)
 - En passant captures
-- Includes all forced draws
+- Pawn promotion
+- All forced draws
     - Stalemate
     - Five fold repetition [reference](https://en.wikipedia.org/wiki/Threefold_repetition#Fivefold_repetition_rule)
     - 75 move rule [reference](https://en.wikipedia.org/wiki/Fifty-move_rule#Seventy-five-move_rule)
@@ -37,8 +39,7 @@ Planning is important.  Early on I had a limited understanding of some chess rul
 ## Possible Improvements
 If I were to return in the future for modifications I would probably look at:
 
-  - Menus: Using arrows keys to move around a menu instead of having to input 1 or 2 in many cases.
+  - Help menu:  Give a simple explanation of how to play.
+  - Menu selection: Using arrows keys to move around a menu instead of having to input 1 or 2 in many cases.
   - Display:  More information on the turn display for half move clock, castling rights, and/or the active en passant target.
-  - AI: Any kind of intelligence.
-  - Saving: Work towards a [PGN](https://en.wikipedia.org/wiki/Portable_Game_Notation) compatible save game.
   - Design:  I designed as I went due to lack of design pattern knowledge.  There's a chance that there is a well known design patter than would have solved or made easier some of the issues I faced along the way.
