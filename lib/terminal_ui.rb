@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative 'display/chessboard'
-require 'pry-byebug'
 
 # User interface to play a game of chess in the terminal.
 class TerminalUI

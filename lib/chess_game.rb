@@ -12,8 +12,6 @@ require_relative 'display/chessboard'
 require_relative 'terminal_ui'
 require_relative 'save_manager'
 
-require 'pry-byebug'
-
 # Logic to setup, start, allow moves, and end a game of chess.
 class ChessGame
   SAVE_FOLDER = 'saves'

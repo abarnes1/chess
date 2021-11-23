@@ -1,6 +1,5 @@
 require_relative '../lib/game_ending'
 require_relative '../lib/game_state'
-require 'pry-byebug'
 
 describe GameEnding do
   let(:white_player) { double('white_player', :name => 'white_player') }
