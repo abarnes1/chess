@@ -23,7 +23,7 @@ module ColorScheme
   end
 
   def default_secondary_background_color
-    Colors::BG_BRIGHT_BLUE
+    Colors::BG_BLUE
   end
 
   def randomize_background_colors
