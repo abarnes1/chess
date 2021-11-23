@@ -30,7 +30,7 @@ This is a CLI chess game written in Ruby for [The Odin Project](https://www.theo
 - Ruby 2.7.2 or newer
 
 ## Reflections
-Chess is complicated and surprisingly hard to write.  This is a far from perfect implementation and was never intended to be one.  It has been a tremendous growth experience in problem solving, understanding Ruby, writing tests, and general determination.  I could tinker for this with ages and never be completely happy with the result, but it is at a good place at the time of writing this.
+Chess is complicated and surprisingly tricky to write.  This project has been a tremendous growth experience in problem solving, understanding Ruby, writing tests, and general determination.  I could tinker with this for ages and never be completely happy with the result, but it is at a good place at the time of writing this.
 
 One thing I really tried to focus on was splitting behavior into smaller classes rather than writing a few giant ones.  This really helped with a lot of testing since the smaller classes could be tested more easily and independently.  Some classes were done with TDD and I believe the benefits tend to outweigh any extra time spent doing so.
 
