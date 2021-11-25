@@ -83,6 +83,10 @@ class TerminalUI
     print 'Select a file number to load or nothing to create a new game: '
   end
 
+  def display_no_saves
+    puts "There are no saves games to display.\n"
+  end
+
   def display_saving(filename)
     puts "Saving your game in file: #{filename}"
   end
